@@ -17,10 +17,12 @@ export function getUsername(text) {
 }
 
 export function getData(userID) {
-  return dispatch => fetch(`http://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/${userID}`)
+  return dispatch => fetch(`https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/never%20bard?api_key=RGAPI-0de51698-fbab-4d55-a050-f81e6349466d`,
+    {mode: 'no-cors'}
+  )
       .then(response => response.json())
       .then(
         data => dispatch({type: 'GET_DATA_SUCCESS', data}),
         err => dispatch({type: 'GET_DATA_FAILURE', err})
       );
-}
+} 
