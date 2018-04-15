@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getUsername } from '../actions.js';
+import { getData } from '../actions.js';
 
 class Input extends React.Component {
   constructor(props) {
@@ -29,9 +29,8 @@ class Input extends React.Component {
                   event.preventDefault();
                   return;
                 }
-                this.props.dispatch(getUsername(this.inputField.value));
+                this.props.dispatch(getData(this.inputField.value));
                 event.preventDefault();
-                this.props.dispatch({ type: 'TEXT_CHANGE', text: '' });
               }
             }}
           />

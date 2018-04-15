@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getData } from '../actions.js';
 
 class Info extends React.Component {
 
@@ -10,9 +9,6 @@ class Info extends React.Component {
 
   }
 
-  componentWillMount() {
-    this.props.dispatch(getData(this.props.input));
-  }
 
   render() {
     return (
