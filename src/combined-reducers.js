@@ -7,4 +7,5 @@ const store = createStore(
     applyMiddleware(thunk)
 );
 
+
 export const configureStore = () => store;

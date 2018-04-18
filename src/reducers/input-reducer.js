@@ -1,12 +1,9 @@
 export default (state = '', action) => {
   switch (action.type) {
-    case 'GET_DATA_SUCCESS':
-      console.log(action.type);
-      console.log(action.text);
+    case 'GET_ID_SUCCESS':
+      state = action.data.accountId;
       return state;
-    case 'GET_DATA_FAILURE':
-      console.log(action.type);
-      console.log(action.text);
+    case 'GET_ID_FAILURE':
       return state;
     default:
       return state;

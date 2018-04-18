@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getData } from '../actions.js';
+import { getID } from '../actions.js';
 
 class Input extends React.Component {
   constructor(props) {
@@ -12,6 +12,8 @@ class Input extends React.Component {
   handleChange(event) {
     this.props.dispatch({ type: 'TEXT_CHANGE', text: event.target.value });
   }
+
+
 
   render() {
     return (
@@ -29,7 +31,7 @@ class Input extends React.Component {
                   event.preventDefault();
                   return;
                 }
-                this.props.dispatch(getData(this.inputField.value));
+                this.props.dispatch(getID(this.inputField.value));
                 event.preventDefault();
               }
             }}
