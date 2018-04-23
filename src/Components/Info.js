@@ -17,7 +17,6 @@ class Info extends React.Component {
       <p>
         Username: {this.props.input}
       </p>
-      this.props.dispatch(getMatches(this.props.input));
       </div>
     );
   }

@@ -27,16 +27,24 @@ export function getID(userID) {
         data => dispatch({type: GET_ID_SUCCESS, data}),
         err => dispatch({type: GET_ID_FAILURE, err})
       );
+
 }
 
 export function getMatches(matchID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/
-    ${matchID}
-    /recent?api_key=${API_KEY}`
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${matchID}/recent?api_key=${API_KEY}`
   )
       .then(response => response.json())
       .then(
         data => dispatch({type: GET_MATCHES_SUCCESS, data}),
         err => dispatch({type: GET_MATCHES_FAILURE, err})
       );
+}
+
+export function getIDAndMatches(userID){
+  return(dispatch, getState) => {
+    return dispatch(getID(userID)).then(() => {
+      const fetchedUser = getState().input;
+      return dispatch(getMatches(fetchedUser.toString()));
+    });
+  }
 }

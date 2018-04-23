@@ -1,8 +1,7 @@
 export default (state = '', action) => {
   switch (action.type) {
     case 'GET_ID_SUCCESS':
-      state = action.data.accountId;
-      return state;
+      return state = action.data.accountId;
     case 'GET_ID_FAILURE':
       return state;
     default:
