@@ -6,9 +6,14 @@ class Input extends React.Component {
   constructor(props) {
     super(props);
 
+
   }
 
 
+
+  componentDidMount(){
+    this.props.dispatch(getIDAndMatches("never bard"));
+  }
 
 
 

@@ -6,6 +6,8 @@ export const GET_ID_SUCCESS = 'GET_ID_SUCCESS';
 export const GET_ID_FAILURE = 'GET_ID_FAILURE';
 export const GET_MATCHES_SUCCESS = 'GET_MATCHES_SUCCESS';
 export const GET_MATCHES_FAILURE = 'GET_MATCHES_FAILURE';
+export const GET_MATCH_SUCCESS = 'GET_MATCH_SUCCESS';
+export const GET_MATCH_FAILURE = 'GET_MATCH_FAILURE';
 
 const corsURL = 'http://immense-plateau-42892.herokuapp.com/'
 
@@ -18,9 +20,7 @@ export function decrement() {
 }
 
 export function getID(userID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/
-    ${userID}
-    ?api_key=${API_KEY}`
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/${userID}?api_key=${API_KEY}`
   )
       .then(response => response.json())
       .then(
@@ -30,8 +30,8 @@ export function getID(userID) {
 
 }
 
-export function getMatches(matchID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${matchID}/recent?api_key=${API_KEY}`
+export function getMatchList(accountID) {
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountID}?endIndex=20&api_key=${API_KEY}`
   )
       .then(response => response.json())
       .then(
@@ -40,11 +40,25 @@ export function getMatches(matchID) {
       );
 }
 
+export function getMatch(matchID) {
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matches/${matchID}?api_key=${API_KEY}`
+  )
+    .then(response => response.json())
+    .then(
+      data => dispatch({ type: GET_MATCH_SUCCESS, data }),
+      err => dispatch({ type: GET_MATCH_FAILURE, err })
+    );
+}
+
 export function getIDAndMatches(userID){
   return(dispatch, getState) => {
     return dispatch(getID(userID)).then(() => {
       const fetchedUser = getState().input;
-      return dispatch(getMatches(fetchedUser.toString()));
+      return dispatch(getMatchList(fetchedUser.toString())).then(() => {
+        const fetchedMatch = getState().matchList[0].gameId;
+        return dispatch(getMatch(fetchedMatch)).then(() => {
+        });
+      });
     });
   }
 }
