@@ -51,20 +51,15 @@ export function getMatch(matchID) {
 }
 
 export function getIDAndMatches(userID){
-  return(dispatch, getState) => {
+  return (dispatch, getState) => {
     return dispatch(getID(userID)).then(() => {
       const fetchedUser = getState().input;
-      return dispatch(getMatchList(fetchedUser.toString())).then(() => {
-        const fetchedMatch = getState().matchList[0].gameId;
-        return dispatch(getMatch(fetchedMatch)).then(() => {
-          const fetchedMatch1 = getState().matchList[1].gameId;
-            return dispatch(getMatch(fetchedMatch1)).then(() => {
-              const fetchedMatch2 = getState().matchList[2].gameId;
-                return dispatch(getMatch(fetchedMatch2)).then(() => {
-                  const fetchedMatch3 = getState().matchList[3].gameId;
-                    return dispatch(getMatch(fetchedMatch3))
-            });
-          });
+      return dispatch(getMatchList(fetchedUser)).then(() => {
+        dispatch(getMatch(getState().matchList[0].gameId))
+        dispatch(getMatch(getState().matchList[1].gameId))
+        .then(() => {
+          console.log(getState());
+          console.log(getState().match[0].match.gameId);
         });
       });
     });
