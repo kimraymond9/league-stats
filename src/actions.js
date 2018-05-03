@@ -57,10 +57,6 @@ export function getIDAndMatches(userID){
       return dispatch(getMatchList(fetchedUser)).then(() => {
         dispatch(getMatch(getState().matchList[0].gameId))
         dispatch(getMatch(getState().matchList[1].gameId))
-        .then(() => {
-          console.log(getState());
-          console.log(getState().match[0].match.gameId);
-        });
       });
     });
   }
