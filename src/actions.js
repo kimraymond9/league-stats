@@ -40,14 +40,21 @@ export function getMatchList(accountID) {
       );
 }
 
-export function getMatch(matchID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matches/${matchID}?api_key=${API_KEY}`
-  )
-    .then(response => response.json())
-    .then(
-      data => dispatch({ type: GET_MATCH_SUCCESS, data }),
-      err => dispatch({ type: GET_MATCH_FAILURE, err })
-    );
+export function getMatch() {
+  var gameIds = [];
+  return (dispatch, getState) => { 
+    const matchList = getState().matchList;
+    for(var i in matchList){
+      gameIds[i] = `${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matches/${matchList[i].gameId}?api_key=${API_KEY}`;
+    }
+    Promise.all(gameIds.map(url => fetch(url)
+      .then(response => response.json())
+      .then(
+        data => dispatch({ type: GET_MATCH_SUCCESS, data }),
+        err => dispatch({ type: GET_MATCH_FAILURE, err })
+      )
+    ))
+  }
 }
 
 export function getIDAndMatches(userID){
@@ -55,8 +62,7 @@ export function getIDAndMatches(userID){
     return dispatch(getID(userID)).then(() => {
       const fetchedUser = getState().input;
       return dispatch(getMatchList(fetchedUser)).then(() => {
-        dispatch(getMatch(getState().matchList[0].gameId))
-        dispatch(getMatch(getState().matchList[1].gameId))
+        return dispatch(getMatch());
       });
     });
   }

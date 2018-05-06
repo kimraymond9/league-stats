@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getMatches } from '../actions.js';
 
 class Info extends React.Component {
 
