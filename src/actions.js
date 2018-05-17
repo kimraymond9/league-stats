@@ -31,7 +31,7 @@ export function getID(userID) {
 }
 
 export function getMatchList(accountID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountID}?endIndex=20&api_key=${API_KEY}`
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountID}?endIndex=5&api_key=${API_KEY}`
   )
       .then(response => response.json())
       .then(

@@ -14,7 +14,7 @@ class Info extends React.Component {
     return (
             <div>
       <p>
-        Username: {this.props.input}
+          Username: 
       </p>
       </div>
     );
@@ -22,7 +22,7 @@ class Info extends React.Component {
 }
 
 
-const mapStateToProps = ({ input }) => ({ input });
+const mapStateToProps = ({ match }) => ({ match });
 // const mapStateToProps = (state) => ({ counter: state.counter });
 
 export default connect(mapStateToProps)(Info);

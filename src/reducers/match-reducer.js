@@ -1,10 +1,13 @@
-export default (state = '', action) => {
+import _ from 'lodash';
+
+export default (state = [], action) => {
   switch (action.type) {
     case 'GET_MATCH_SUCCESS':
-      return [...state,
-        {
-          match: action.data,
-        }];
+      var newState = []
+       _.merge(newState, state);
+      newState.push(action.data);
+      console.log(newState);
+      return newState;
     case 'GET_MATCH_FAILURE':
       return state;
     default:
