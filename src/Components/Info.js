@@ -14,7 +14,7 @@ class Info extends React.Component {
     return (
             <div>
       <p>
-          Username: 
+          Username: {this.props.match[0].gameId}
       </p>
       </div>
     );
