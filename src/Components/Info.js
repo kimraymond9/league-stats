@@ -24,15 +24,6 @@ class Info extends React.Component {
           <p>Game ID: {this.props.match[4].gameId}</p>
         </div>
       );
-    return (
-      <div>
-        <p>Game ID: {this.props.match[0].gameId}</p>
-        <p>Game ID: {this.props.match[1].gameId}</p>
-        <p>Game ID: {this.props.match[2].gameId}</p>
-        <p>Game ID: {this.props.match[3].gameId}</p>
-        <p>Game ID: {this.props.match[4].gameId}</p>
-      </div>
-    );
   }
 }
 
