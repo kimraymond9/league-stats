@@ -3,44 +3,37 @@ import { connect } from 'react-redux';
 import { getIDAndMatches } from '../actions.js';
 
 class Input extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props);
 
-
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-
-
-  componentDidMount(){
-    this.props.dispatch(getIDAndMatches("never bard"));
+  
+  handleSubmit(event) {
+    event.preventDefault();
+    const userName = event.target.Username.value;
+    const champion = event.target.Champion.value;
+    this.props.dispatch(getIDAndMatches(userName, champion));
   }
-
-
 
   render() {
     return (
-      <form>
-        <label>
-          name
-          <input
-            type="text"
-            ref={(element) => this.inputField = element}
-            onKeyPress={(event) => {
-              if (event.key === 'Enter') {
-                if (this.inputField.value === '') {
-                  alert('empty');
-                  event.preventDefault();
-                  return;
-                }
-                this.props.dispatch(getIDAndMatches(this.inputField.value));
-                event.preventDefault();
-              }
-            }}
-          />
-        </label>
+      <form onSubmit={this.handleSubmit}>
+        <label>UserName</label>
+        <input type="text" name="Username" defaultValue="never bard"/>
+
+        <label>Champion</label>
+        <select name="Champion">
+          <option value="412">Thresh</option>
+          <option value="420">Illaoi</option>
+          <option value="24">Jax</option>
+          <option value="9">Fiddle</option>
+        </select>   
+        <button type="submit">Submit</button>   
       </form>
     );
   }
+  
 }
 
 const mapStateToProps = ({ Input }) => ({

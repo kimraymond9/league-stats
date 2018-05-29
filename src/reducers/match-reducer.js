@@ -4,9 +4,8 @@ export default (state = [], action) => {
   switch (action.type) {
     case 'GET_MATCH_SUCCESS':
       var newState = []
-       _.merge(newState, state);
+      _.merge(newState, state);
       newState.push(action.data);
-      console.log(newState);
       return newState;
     case 'GET_MATCH_FAILURE':
       return state;

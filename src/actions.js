@@ -1,22 +1,26 @@
 import { API_KEY } from './Api.js';
 
-export const INCREMENT = 'INCREMENT';
-export const DECREMENT = 'DECREMENT';
 export const GET_ID_SUCCESS = 'GET_ID_SUCCESS';
 export const GET_ID_FAILURE = 'GET_ID_FAILURE';
 export const GET_MATCHES_SUCCESS = 'GET_MATCHES_SUCCESS';
 export const GET_MATCHES_FAILURE = 'GET_MATCHES_FAILURE';
 export const GET_MATCH_SUCCESS = 'GET_MATCH_SUCCESS';
 export const GET_MATCH_FAILURE = 'GET_MATCH_FAILURE';
+export const GET_USER_DATA = 'GET_USER_DATA';
+export const GET_CHAMPION_SUCCESS = 'GET_CHAMPION_SUCCESS';
+export const GET_CHAMPION_FAILURE = 'GET_CHAMPION_FAILURE';
+
 
 const corsURL = 'http://immense-plateau-42892.herokuapp.com/'
 
-export function increment() {
-  return { type: INCREMENT }
-}
-
-export function decrement() {
-  return { type: DECREMENT }
+export function getChampionData(championID) {
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/static-data/v3/champions/${championID}?locale=en_US&champData=all&tags=all&api_key=${API_KEY}`
+  )
+    .then(response => response.json())
+    .then(
+      data => dispatch({ type: GET_CHAMPION_SUCCESS, data }),
+      err => dispatch({ type: GET_CHAMPION_FAILURE, err })
+    );
 }
 
 export function getID(userID) {
@@ -30,8 +34,8 @@ export function getID(userID) {
 
 }
 
-export function getMatchList(accountID) {
-  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountID}?endIndex=5&api_key=${API_KEY}`
+export function getMatchList(accountID, championID) {
+  return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/match/v3/matchlists/by-account/${accountID}?champion=${championID}&endIndex=5&queue=400&queue420&queue=430&queue=440&api_key=${API_KEY}`
   )
       .then(response => response.json())
       .then(
@@ -57,13 +61,27 @@ export function getMatch() {
   }
 }
 
-export function getIDAndMatches(userID){
+export function getIDAndMatches(userID, championID){
   return (dispatch, getState) => {
     return dispatch(getID(userID)).then(() => {
       const fetchedUser = getState().input;
-      return dispatch(getMatchList(fetchedUser)).then(() => {
-        return dispatch(getMatch());
-      });
-    });
+      return dispatch(getMatchList(fetchedUser, championID)).then(() => {
+        return dispatch(getChampionData(championID)).then(() => {
+          return dispatch(getMatch())
+        })
+      })
+    })
   }
+}
+
+export function getUserData(data, userID){
+  return dispatch => {
+  var i;
+  for (i = 0; i < data.participantIdentities.length; i++){
+    if (data.participantIdentities[i].player.currentAccountId === userID){
+      var userData = data.participants[i];
+      dispatch({ type: GET_USER_DATA, userData})
+    }
+  }
+}
 }

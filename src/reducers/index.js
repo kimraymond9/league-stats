@@ -1,12 +1,14 @@
-import counter from './counter-reducer';
 import input from './input-reducer';
 import matchList from './match-list-reducer';
 import match from './match-reducer';
+import info from './info-reducer';
+import champion from './champion-reducer';
 
 
 export {
-  counter,
   input,
   matchList,
   match,
+  info,
+  champion,
 };
