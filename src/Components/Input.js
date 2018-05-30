@@ -11,9 +11,7 @@ class Input extends React.Component {
   
   handleSubmit(event) {
     event.preventDefault();
-    const userName = event.target.Username.value;
-    const champion = event.target.Champion.value;
-    this.props.dispatch(getIDAndMatches(userName, champion));
+    this.props.dispatch(getIDAndMatches(event.target.Username.value, event.target.Champion.value));
   }
 
   render() {

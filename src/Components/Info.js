@@ -6,27 +6,26 @@ import { getUserData } from '../actions.js';
 class Info extends React.Component {
 
   render() {
-    const match = this.props.match;
-    const input = this.props.input;
-    if (match.length < 5) {
+    if (this.props.match.length < 5) {
       return null;
     }
-    var i;
-    for (i = 0; i < match.length; i++) {
-      this.props.dispatch(getUserData(match[i], input));
+    if (this.props.info.length < 5) {
+      return null;
     }
-      return (
-        <div>
-          <p>Game ID: {this.props.match[0].gameId}</p>
-          <p>Game ID: {this.props.match[1].gameId}</p>
-          <p>Game ID: {this.props.match[2].gameId}</p>
-          <p>Game ID: {this.props.match[3].gameId}</p>
-          <p>Game ID: {this.props.match[4].gameId}</p>
-        </div>
-      );
+    
+
+    return (
+      <div>
+        <p>Score: {this.props.info[0].stats.kills}/{this.props.info[0].stats.deaths}/{this.props.info[0].stats.assists}</p>
+        <p>Score: {this.props.info[1].stats.kills}/{this.props.info[1].stats.deaths}/{this.props.info[1].stats.assists}</p>
+        <p>Score: {this.props.info[2].stats.kills}/{this.props.info[2].stats.deaths}/{this.props.info[2].stats.assists}</p>
+        <p>Score: {this.props.info[3].stats.kills}/{this.props.info[3].stats.deaths}/{this.props.info[3].stats.assists}</p>
+        <p>Score: {this.props.info[4].stats.kills}/{this.props.info[4].stats.deaths}/{this.props.info[4].stats.assists}</p>
+      </div>
+    );
   }
 }
 
-const mapStateToProps = ({ match, input }) => ({ match, input });
+const mapStateToProps = ({ match, info }) => ({ match, info });
 
 export default connect(mapStateToProps)(Info);
