@@ -1,20 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getUserData } from '../actions.js';
-
 
 class Info extends React.Component {
 
   render() {
-    if (this.props.match.length < 5) {
-      return null;
-    }
     if (this.props.info.length < 5) {
+      
       return null;
     }
-    
 
     return (
+      
       <div>
         <p>Score: {this.props.info[0].stats.kills}/{this.props.info[0].stats.deaths}/{this.props.info[0].stats.assists}</p>
         <p>Score: {this.props.info[1].stats.kills}/{this.props.info[1].stats.deaths}/{this.props.info[1].stats.assists}</p>
@@ -26,6 +22,6 @@ class Info extends React.Component {
   }
 }
 
-const mapStateToProps = ({ match, info }) => ({ match, info });
+const mapStateToProps = ({ info, matchList }) => ({ info, matchList });
 
 export default connect(mapStateToProps)(Info);

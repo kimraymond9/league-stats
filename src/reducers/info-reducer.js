@@ -7,7 +7,9 @@ export default (state = [], action) => {
             _.merge(newState, state);
             newState.push(action.userData);
             return newState;
-        case 'GET_AGGREGATE_DATA':
+        case 'GET_AGGREGATE_USER_DATA':
+            return state;
+        case 'GET_AGGREGATE_MATCH_DATA':
             return state;
         default:
             return state;

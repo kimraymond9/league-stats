@@ -7,13 +7,14 @@ export const GET_MATCHES_FAILURE = 'GET_MATCHES_FAILURE';
 export const GET_MATCH_SUCCESS = 'GET_MATCH_SUCCESS';
 export const GET_MATCH_FAILURE = 'GET_MATCH_FAILURE';
 export const GET_USER_DATA = 'GET_USER_DATA';
-export const GET_AGGREGATE_DATA = 'GET_AGGREGATE_DATA';
+export const GET_AGGREGATE_USER_DATA = 'GET_AGGREGATE_USER_DATA';
+export const GET_AGGREGATE_MATCH_DATA = 'GET_AGGREGATE_MATCH_DATA'
 export const GET_CHAMPION_SUCCESS = 'GET_CHAMPION_SUCCESS';
 export const GET_CHAMPION_FAILURE = 'GET_CHAMPION_FAILURE';
 
 
 const corsURL = 'http://immense-plateau-42892.herokuapp.com/';
-const maxLength = 5;
+var maxLength = 20;
 
 export function getChampionData(championID) {
   return dispatch => fetch(`${corsURL}https://oc1.api.riotgames.com/lol/static-data/v3/champions/${championID}?locale=en_US&champData=all&api_key=${API_KEY}`
@@ -59,12 +60,10 @@ export function getMatch() {
         data => dispatch({ type: GET_MATCH_SUCCESS, data }),
         err => dispatch({ type: GET_MATCH_FAILURE, err })
       ).then(() => {
-        const matchLength = getState().match.length;
-        if (matchLength === maxLength){
-          const accountID = getState().input;
-          const match = getState().match;
+        const match = getState().match;
+        if (match.length === maxLength){
           for (var j = 0; j < maxLength; j++) {
-            dispatch(getUserData(match[j], accountID));
+            dispatch(getUserData(match[j]));
           }
         }
       })
@@ -72,26 +71,70 @@ export function getMatch() {
   }
 }
 
-export function getUserData(data, userID) {
+export function getUserData(data) {
   return (dispatch, getState) => {
-    for (var i = 0; i < data.participantIdentities.length; i++) {
-      if (data.participantIdentities[i].player.currentAccountId === userID) {
-        var userData = data.participants[i];
+    const accountID = getState().input;
+    for (var j = 0; j < data.participantIdentities.length; j++) {
+      if (data.participantIdentities[j].player.currentAccountId === accountID) {
+        var userData = data.participants[j];
         dispatch({ type: GET_USER_DATA, userData })
       }
     }
-    const infoLength = getState().info.length;
-    if(infoLength === maxLength){
-      const infoData = getState().info;
-      dispatch(getAggregateData(infoData));
+    const info = getState().info;
+    if(info.length === maxLength){
+      dispatch(getAggregateUserData(info));
     }
   }
 }
 
-export function getAggregateData(data){
-  return dispatch => {
-    console.log("do calcs");
-    dispatch({ type: GET_AGGREGATE_DATA, data});
+export function getAggregateUserData(data){
+  return (dispatch, getState) => {
+
+    const match = getState().match;
+    var averageKills = 0;
+    var averageDeaths = 0;
+    var averageAssists = 0;
+    var averageVisionWardsBought = 0;
+    var averageDamageDealtToTurrets = 0;
+    var averageDamageDealtToObjectives = 0;
+    var averageMinionsPerMinute = 0;
+
+    var minionsPerMinute = [];
+    for (var i = 0; i < maxLength; i++) {
+      var durationInMinutes = match[i].gameDuration / 60;
+      minionsPerMinute[i] = data[i].stats.totalMinionsKilled / durationInMinutes;
+    }
+
+    for(var i in data){
+      averageKills += data[i].stats.kills;
+      averageDeaths += data[i].stats.deaths;
+      averageAssists += data[i].stats.assists;
+      averageVisionWardsBought += data[i].stats.visionWardsBoughtInGame;
+      averageDamageDealtToTurrets += data[i].stats.damageDealtToTurrets;
+      averageDamageDealtToObjectives += data[i].stats.damageDealtToObjectives;
+      averageMinionsPerMinute += minionsPerMinute[i];
+    }
+
+
+    averageKills /= maxLength;
+    averageDeaths /= maxLength;
+    averageAssists /= maxLength;
+    averageVisionWardsBought /= maxLength;
+    averageDamageDealtToTurrets /= maxLength;
+    averageDamageDealtToObjectives /= maxLength;
+    averageMinionsPerMinute /= maxLength;
+
+
+    console.log("averageKills: " + averageKills);
+    console.log("averageDeaths: " + averageDeaths);
+    console.log("averageAssists: " + averageAssists);
+    console.log("averageVisionWardsBought: " + averageVisionWardsBought);
+    console.log("averageDamageDealtToTurrets: " + averageDamageDealtToTurrets);
+    console.log("averageDamageDealtToObjectives: " + averageDamageDealtToObjectives);
+    console.log("averageMinionsPerMinute: " + averageMinionsPerMinute);
+    
+
+    dispatch({ type: GET_AGGREGATE_USER_DATA, data});
   }
 }
 
@@ -101,6 +144,7 @@ export function getIDAndMatches(userID, championID){
       const fetchedUser = getState().input;
       return dispatch(getMatchList(fetchedUser, championID)).then(() => {
       //  return dispatch(getChampionData(championID)).then(() => {
+          maxLength = getState().matchList.length;
           return dispatch(getMatch())
       //  })
       })
