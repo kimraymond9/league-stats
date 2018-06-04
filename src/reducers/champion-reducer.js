@@ -1,9 +1,15 @@
-export default (state = '', action) => {
+import ACTION_TYPES from '../action-types';
+
+export default (state = {}, action) => {
     switch (action.type) {
-        case 'GET_CHAMPION_SUCCESS':
-            return state;
-        case 'GET_CHAMPION_FAILURE':
-            return state;    
+        case ACTION_TYPES.GET_CHAMPION_SUCCESS:
+            return {
+                id: action.data.id
+            }
+        case ACTION_TYPES.GET_CHAMPION_FAILURE:
+            return {
+                id: '412' // Thresh
+            }
         default:
             return state;
     }

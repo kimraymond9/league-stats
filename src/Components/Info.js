@@ -2,26 +2,27 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 class Info extends React.Component {
-
   render() {
-    if (this.props.info.length < 5) {
-      
+    if (!this.props.userData) {
       return null;
     }
-
     return (
-      
       <div>
-        <p>Score: {this.props.info[0].stats.kills}/{this.props.info[0].stats.deaths}/{this.props.info[0].stats.assists}</p>
-        <p>Score: {this.props.info[1].stats.kills}/{this.props.info[1].stats.deaths}/{this.props.info[1].stats.assists}</p>
-        <p>Score: {this.props.info[2].stats.kills}/{this.props.info[2].stats.deaths}/{this.props.info[2].stats.assists}</p>
-        <p>Score: {this.props.info[3].stats.kills}/{this.props.info[3].stats.deaths}/{this.props.info[3].stats.assists}</p>
-        <p>Score: {this.props.info[4].stats.kills}/{this.props.info[4].stats.deaths}/{this.props.info[4].stats.assists}</p>
+        {
+          this.props.userData.map((currentUserData, i) =>
+            <p key={i}>Score: {currentUserData.stats.kills}/{currentUserData.stats.deaths}/{currentUserData.stats.assists}</p>
+          )
+        }
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ info, matchList }) => ({ info, matchList });
+const mapStateToProps = state => {
+  return {
+    userData: state.userData,
+    matchList: state.matchList
+  }
+};
 
 export default connect(mapStateToProps)(Info);

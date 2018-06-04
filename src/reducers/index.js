@@ -1,14 +1,13 @@
-import input from './input-reducer';
+import summoner from './summoner-reducer';
 import matchList from './match-list-reducer';
-import match from './match-reducer';
-import info from './info-reducer';
+import matches from './match-reducer';
+import userData from './user-data-reducer';
 import champion from './champion-reducer';
 
-
 export {
-  input,
+  summoner,
   matchList,
-  match,
-  info,
+  matches,
+  userData,
   champion,
 };

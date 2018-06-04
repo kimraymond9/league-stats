@@ -1,42 +1,45 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { getIDAndMatches } from '../actions.js';
 
 class Input extends React.Component {
+
   constructor(props){
     super(props);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      username: "",
+      championId: ""
+    };
   }
   
-  handleSubmit(event) {
-    event.preventDefault();
-    this.props.dispatch(getIDAndMatches(event.target.Username.value, event.target.Champion.value));
+  handleGetMatches = (event) => {
+    this.props.dispatch(this.props.getDataForSummonerNameAndChampionId(this.state.username, this.state.championId));
+  }
+
+  handleUsernameChanged = (event) => {
+    this.setState({username: event.target.value});
+  }
+
+  handleChampionChanged = (event) => {
+    this.setState({championId: event.target.value});
   }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>UserName</label>
-        <input type="text" name="Username" defaultValue="never bard"/>
+      <div>
+        <label>Username</label>
+        <input type="text" name="Username" onChange={this.handleUsernameChanged}/>
 
         <label>Champion</label>
-        <select name="Champion">
+        <select name="Champion" onChange={this.handleChampionChanged}>
+          <option />
           <option value="412">Thresh</option>
           <option value="420">Illaoi</option>
           <option value="24">Jax</option>
           <option value="9">Fiddle</option>
         </select>   
-        <button type="submit">Submit</button>   
-      </form>
+        <button onClick={this.handleGetMatches}>Get Matches!</button>   
+      </div>
     );
   }
-  
 }
 
-const mapStateToProps = ({ Input }) => ({
-  Input,
-});
-// const mapStateToProps = (state) => ({ text: state.text });
-
-export default connect(mapStateToProps)(Input);
+export default Input;
