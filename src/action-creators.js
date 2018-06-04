@@ -41,18 +41,13 @@ const getChampionById = championId => {
 const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue420&queue=430&queue=440&api_key=${API_KEY}`)
 
 const getChampionMatchListByAccount = (championId, accountId) => {
-    return dispatch => {
-        return fetchChampionMatchListByAccount(championId, accountId).then(
-            response => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response.json();
-            }).then(
-            data => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_SUCCESS, data }),
-            err => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_FAILURE, err })
-        );
-    }
+    return fetchChampionMatchListByAccount(championId, accountId).then(
+        response => {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            return response.json();
+        })
 }
 
 // MATCHES
@@ -138,16 +133,19 @@ const getAggregateUserDataByUserDataForMatchesAndMatches = (userDataForMatches, 
         console.log("averageDamageDealtToObjectives: " + averageDamageDealtToObjectives);
         console.log("averageMinionsPerMinute: " + averageMinionsPerMinute);
 
-        dispatch({ type: ACTION_TYPES.GET_AGGREGATE_USER_DATA, userDataForMatches });
+        //dispatch({ type: ACTION_TYPES.GET_AGGREGATE_USER_DATA, userDataForMatches });
     }
 }
 
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
+    var matchList = []
     return (dispatch, getState) => {
         dispatch(getSummonerByName(summonerName))
         .then(() => dispatch(getChampionById(championId)))
-        .then(() => dispatch(getChampionMatchListByAccount(getState().champion.id, getState().summoner.accountId)))
-        .then(() => dispatch(getMatchesForMatchList(getState().matchList)))
+        .then(() => getChampionMatchListByAccount(getState().champion.id, getState().summoner.accountId).then(data => {
+            matchList = data.matches;
+        }, err => err))
+        .then(() => dispatch(getMatchesForMatchList(matchList)))
         .then(() => dispatch(getUserDataForMatches(getState().summoner.accountId, getState().matches)))
         .then(() => dispatch(getAggregateUserDataByUserDataForMatchesAndMatches(getState().userData, getState().matches)))
     }
