@@ -8,7 +8,7 @@ export default (state = {}, action) => {
             }
         case ACTION_TYPES.GET_CHAMPION_FAILURE:
             return {
-                id: '412' // Thresh
+                id: '245' // Thresh
             }
         default:
             return state;

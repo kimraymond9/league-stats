@@ -18,7 +18,6 @@ const getSummonerByName = summonerName => {
         );
     }
 }
-
 // CHAMPION
 const fetchChampionById = championId => fetch(`${CORS_URL}${RIOT_URL}static-data/v3/champions/${championId}?locale=en_US&champData=all&api_key=${API_KEY}`)
 
@@ -38,7 +37,7 @@ const getChampionById = championId => {
 }
 
 // MATCH LIST
-const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue420&queue=430&queue=440&api_key=${API_KEY}`)
+const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=430&queue=440&api_key=${API_KEY}`)
 
 const getChampionMatchListByAccount = (championId, accountId) => {
     return fetchChampionMatchListByAccount(championId, accountId).then(
@@ -74,71 +73,166 @@ const getMatchesForMatchList = matchList => {
     }
 }
 
+
 // USER DATA
 const getUserDataForMatches = (accountId, matches) => {
     return dispatch => {
+        var userDataForMatches = [];
+
+        console.log(matches)
+
         matches.forEach(match => {
             for (var i = 0; i < match.participantIdentities.length; i++) {
                 if (accountId === match.participantIdentities[i].player.currentAccountId) {
-                    var userData = match.participants[i];
-                    dispatch({ type: ACTION_TYPES.GET_USER_DATA, userData })
+                    userDataForMatches.push(match.participants[i]);
                     break;
                 }
             }
         })
-    }
-}
+    
+    var averageKills = 0;
+    var averageDeaths = 0;
+    var averageAssists = 0;
+    var averageVisionWardsBought = 0;
+    var averageWardsKilled = 0;
+    var averageWardsPlaced = 0;
+    var averageVisionScore = 0;
+    var averageDamageDealtToTurrets = 0;
+    var averageDamageDealtToObjectives = 0;
+    var averageTotalDamageDealtToChampions = 0;
+    var averagePhysicalDamageDealtToChampions = 0;
+    var averageMagicDamageDealtToChampions = 0;
+    var averageTrueDamageDealtToChampions = 0;
+    var averagePercentageOfTrueDamage = 0;
+    var averagePercentageOfPhysicalDamage = 0;
+    var averagePercentageOfMagicDamage = 0;
+    var averageDamageDealtToChampionsPerMinute = 0;
+    var averageMinionsPerMinute = 0;
+    var averageGoldPerMinute = 0;
+    var numberOfWins = 0;
+    var numberOfLosses = 0;
+    var winrate = 0;
+    var numberOfGames = 0;
 
-// AGGREGATE USER DATA
-const getAggregateUserDataByUserDataForMatchesAndMatches = (userDataForMatches, matches) => {
-    return dispatch => {
-        var averageKills = 0;
-        var averageDeaths = 0;
-        var averageAssists = 0;
-        var averageVisionWardsBought = 0;
-        var averageDamageDealtToTurrets = 0;
-        var averageDamageDealtToObjectives = 0;
-        var averageMinionsPerMinute = 0;
 
-        var minionsPerMinute = [];
-        for (var i = 0; i < MAX_LENGTH; i++) {
-            var durationInMinutes = matches[i].gameDuration / 60;
-            minionsPerMinute[i] = userDataForMatches[i].stats.totalMinionsKilled / durationInMinutes;
+    userDataForMatches.forEach((userData, i) => {
+        numberOfGames++;
+
+        var durationInMinutes = matches[i].gameDuration / 60;
+
+
+        averageKills += userData.stats.kills;
+        averageDeaths += userData.stats.deaths;
+        averageAssists += userData.stats.assists;
+        averageVisionWardsBought += userData.stats.visionWardsBoughtInGame;
+        averageWardsKilled += userData.stats.wardsKilled;
+        averageWardsPlaced += userData.stats.wardsPlaced;
+        averageVisionScore += userData.stats.visionScore;
+        averageDamageDealtToTurrets += userData.stats.damageDealtToTurrets;
+        averageDamageDealtToObjectives += userData.stats.damageDealtToObjectives;
+        averageTotalDamageDealtToChampions += userData.stats.totalDamageDealtToChampions;
+        averagePhysicalDamageDealtToChampions += userData.stats.physicalDamageDealtToChampions;
+        averageMagicDamageDealtToChampions += userData.stats.magicDamageDealtToChampions;
+        averageTrueDamageDealtToChampions += userData.stats.trueDamageDealtToChampions;
+        averageMinionsPerMinute += userData.stats.totalMinionsKilled / durationInMinutes;
+        averageDamageDealtToChampionsPerMinute += userData.stats.totalDamageDealtToChampions / durationInMinutes;
+        averageGoldPerMinute += userData.stats.goldEarned / durationInMinutes;
+        
+        if (userData.stats.win) {
+            numberOfWins++;
+        } else {
+            numberOfLosses++;
         }
 
-        userDataForMatches.forEach((userData, i) => {
-            averageKills += userData.stats.kills;
-            averageDeaths += userData.stats.deaths;
-            averageAssists += userData.stats.assists;
-            averageVisionWardsBought += userData.stats.visionWardsBoughtInGame;
-            averageDamageDealtToTurrets += userData.stats.damageDealtToTurrets;
-            averageDamageDealtToObjectives += userData.stats.damageDealtToObjectives;
-            averageMinionsPerMinute += minionsPerMinute[i];
-        })
+    })
 
-        averageKills /= MAX_LENGTH;
-        averageDeaths /= MAX_LENGTH;
-        averageAssists /= MAX_LENGTH;
-        averageVisionWardsBought /= MAX_LENGTH;
-        averageDamageDealtToTurrets /= MAX_LENGTH;
-        averageDamageDealtToObjectives /= MAX_LENGTH;
-        averageMinionsPerMinute /= MAX_LENGTH;
+    averageKills /= numberOfGames;
+    averageDeaths /= numberOfGames;
+    averageAssists /= numberOfGames;
+    averageVisionWardsBought /= numberOfGames;
+    averageWardsKilled /= numberOfGames;
+    averageWardsPlaced /= numberOfGames;
+    averageVisionScore /= numberOfGames;
+    averageDamageDealtToTurrets /= numberOfGames;
+    averageDamageDealtToObjectives /= numberOfGames;
+    averageTotalDamageDealtToChampions /= numberOfGames;
+    averagePhysicalDamageDealtToChampions /= numberOfGames;
+    averageMagicDamageDealtToChampions /= numberOfGames;
+    averageTrueDamageDealtToChampions /= numberOfGames;
+    
+    
+    averagePercentageOfPhysicalDamage = (averagePhysicalDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
+    averagePercentageOfMagicDamage = (averageMagicDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
+    averagePercentageOfTrueDamage = (averageTrueDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
+ 
+    averageGoldPerMinute = (averageGoldPerMinute / numberOfGames).toFixed(2);
+    averageMinionsPerMinute = (averageMinionsPerMinute / numberOfGames).toFixed(2);
+    averageDamageDealtToChampionsPerMinute = (averageDamageDealtToChampionsPerMinute / numberOfGames).toFixed(1);
+    winrate = (numberOfWins / numberOfGames) * 100;
+
+    const aggregateData = {
+        numberOfGames: numberOfGames,
+        numberOfWins: numberOfWins,
+        numberOfLosses: numberOfLosses,
+        winrate: winrate,
+        averageKills: averageKills,
+        averageDeaths: averageDeaths,
+        averageAssists: averageAssists,
+        averageVisionWardsBought: averageVisionWardsBought,
+        averageWardsKilled: averageWardsKilled,
+        averageWardsPlaced: averageWardsPlaced,
+        averageVisionScore: averageVisionScore,
+        averageDamageDealtToTurrets: averageDamageDealtToTurrets,
+        averageDamageDealtToObjectives: averageDamageDealtToObjectives,
+        averageMinionsPerMinute: averageMinionsPerMinute,
+        averageDamageDealtToChampionsPerMinute: averageDamageDealtToChampionsPerMinute,
+        averageTotalDamageDealtToChampions: averageTotalDamageDealtToChampions,
+        averagePhysicalDamageDealtToChampions: averagePhysicalDamageDealtToChampions,
+        averageMagicDamageDealtToChampions: averageMagicDamageDealtToChampions,
+        averagePercentageOfPhysicalDamage: averagePercentageOfPhysicalDamage,
+        averagePercentageOfMagicDamage: averagePercentageOfMagicDamage,
+        averageTrueDamageDealtToChampions: averageTrueDamageDealtToChampions,
+        averagePercentageOfTrueDamage: averagePercentageOfTrueDamage,
+        averageGoldPerMinute: averageGoldPerMinute,
 
 
-        console.log("averageKills: " + averageKills);
-        console.log("averageDeaths: " + averageDeaths);
-        console.log("averageAssists: " + averageAssists);
-        console.log("averageVisionWardsBought: " + averageVisionWardsBought);
-        console.log("averageDamageDealtToTurrets: " + averageDamageDealtToTurrets);
-        console.log("averageDamageDealtToObjectives: " + averageDamageDealtToObjectives);
-        console.log("averageMinionsPerMinute: " + averageMinionsPerMinute);
-
-        //dispatch({ type: ACTION_TYPES.GET_AGGREGATE_USER_DATA, userDataForMatches });
-    }
+        
+    };
+    return dispatch({ type: ACTION_TYPES.GET_USER_DATA, aggregateData});
+}
 }
 
+const getOpponentDataForMatches = (accountId, matches) => {
+    return dispatch => {
+        var opponentDataForMatches = [];
+
+
+        matches.forEach(match => {
+            var teamOfOpponent;
+            for (var i = 0; i < match.participantIdentities.length; i++) {
+                if (accountId === match.participantIdentities[i].player.currentAccountId) {
+                    if(match.participants[i].teamId == 100){
+                        teamOfOpponent = 200;
+                    }else{
+                        teamOfOpponent = 100;
+                    }
+                }
+            }
+
+            for (var i = 0; i < match.participantIdentities.length; i++) {
+                if (match.participants[i].teamId === teamOfOpponent){
+                    opponentDataForMatches.push(match.participants[i]);
+                }
+            }
+        })
+
+        console.log(opponentDataForMatches);
+    }}
+
+
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
-    var matchList = []
+    var matchList = [];
+
     return (dispatch, getState) => {
         dispatch(getSummonerByName(summonerName))
         .then(() => dispatch(getChampionById(championId)))
@@ -147,6 +241,6 @@ export const getDataForSummonerNameAndChampionId = (summonerName, championId) =>
         }, err => err))
         .then(() => dispatch(getMatchesForMatchList(matchList)))
         .then(() => dispatch(getUserDataForMatches(getState().summoner.accountId, getState().matches)))
-        .then(() => dispatch(getAggregateUserDataByUserDataForMatchesAndMatches(getState().userData, getState().matches)))
+        .then(() => dispatch(getOpponentDataForMatches(getState().summoner.accountId, getState().matches)))
     }
 }
