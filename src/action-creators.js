@@ -37,7 +37,7 @@ const getChampionById = championId => {
 }
 
 // MATCH LIST
-const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=430&queue=440&api_key=${API_KEY}`)
+const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=430&queue=440&queue=700&api_key=${API_KEY}`)
 
 const getChampionMatchListByAccount = (championId, accountId) => {
     return fetchChampionMatchListByAccount(championId, accountId).then(
@@ -78,8 +78,6 @@ const getMatchesForMatchList = matchList => {
 const getUserDataForMatches = (accountId, matches) => {
     return dispatch => {
         var userDataForMatches = [];
-
-        console.log(matches)
 
         matches.forEach(match => {
             for (var i = 0; i < match.participantIdentities.length; i++) {
@@ -195,8 +193,6 @@ const getUserDataForMatches = (accountId, matches) => {
         averagePercentageOfTrueDamage: averagePercentageOfTrueDamage,
         averageGoldPerMinute: averageGoldPerMinute,
 
-
-        
     };
     return dispatch({ type: ACTION_TYPES.GET_USER_DATA, aggregateData});
 }
@@ -206,12 +202,11 @@ const getOpponentDataForMatches = (accountId, matches) => {
     return dispatch => {
         var opponentDataForMatches = [];
 
-
         matches.forEach(match => {
             var teamOfOpponent;
             for (var i = 0; i < match.participantIdentities.length; i++) {
                 if (accountId === match.participantIdentities[i].player.currentAccountId) {
-                    if(match.participants[i].teamId == 100){
+                    if(match.participants[i].teamId === 100){
                         teamOfOpponent = 200;
                     }else{
                         teamOfOpponent = 100;
@@ -219,15 +214,47 @@ const getOpponentDataForMatches = (accountId, matches) => {
                 }
             }
 
-            for (var i = 0; i < match.participantIdentities.length; i++) {
-                if (match.participants[i].teamId === teamOfOpponent){
-                    opponentDataForMatches.push(match.participants[i]);
+            for (var j = 0; j < match.participantIdentities.length; j++) {
+                if (match.participants[j].teamId === teamOfOpponent){
+                    opponentDataForMatches.push(match.participants[j]);
                 }
             }
         })
 
-        console.log(opponentDataForMatches);
+        var opponentChampionAndResult = [];
+        opponentDataForMatches.forEach(data => {
+            opponentChampionAndResult.push({ Champion: data.championId, Result: data.stats.win})
+        })
+
+        console.log(opponentChampionAndResult);
+
+      
+        var output = opponentChampionAndResult.reduce(function (o, cur) {
+
+            // Get the index of the key-value pair.
+            var occurs = o.reduce(function (n, item, i) {
+                return (item.Champion === cur.Champion) ? i : n;
+            }, -1);
+
+            // If the name is found,
+            if (occurs >= 0) {
+
+                // append the current value to its list of values.
+                o[occurs].Result = o[occurs].Result.concat(cur.Result);
+
+                // Otherwise,
+            } else {
+
+                // add the current item to o (but make sure the value is an array).
+                var obj = { Champion: cur.Champion, Result: [cur.Result] };
+                o = o.concat([obj]);
+            }
+
+            return o;
+        }, []);
+        console.log(output)
     }}
+
 
 
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {

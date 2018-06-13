@@ -4,11 +4,11 @@ export default (state = {}, action) => {
     switch (action.type) {
         case ACTION_TYPES.GET_CHAMPION_SUCCESS:
             return {
-                id: action.data.id
+                id: '412'
             }
         case ACTION_TYPES.GET_CHAMPION_FAILURE:
             return {
-                id: '245' // Thresh
+                id: '412' // Thresh
             }
         default:
             return state;
