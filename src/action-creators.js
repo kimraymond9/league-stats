@@ -144,29 +144,29 @@ const getUserDataForMatches = (accountId, matches) => {
 
     })
 
-    averageKills /= numberOfGames;
-    averageDeaths /= numberOfGames;
-    averageAssists /= numberOfGames;
-    averageVisionWardsBought /= numberOfGames;
-    averageWardsKilled /= numberOfGames;
-    averageWardsPlaced /= numberOfGames;
-    averageVisionScore /= numberOfGames;
-    averageDamageDealtToTurrets /= numberOfGames;
-    averageDamageDealtToObjectives /= numberOfGames;
-    averageTotalDamageDealtToChampions /= numberOfGames;
-    averagePhysicalDamageDealtToChampions /= numberOfGames;
-    averageMagicDamageDealtToChampions /= numberOfGames;
-    averageTrueDamageDealtToChampions /= numberOfGames;
+        averageKills = (averageKills / numberOfGames).toFixed(1);
+        averageDeaths = (averageDeaths / numberOfGames).toFixed(1);
+        averageAssists = (averageAssists / numberOfGames).toFixed(1);
+        averageVisionWardsBought = (averageVisionWardsBought / numberOfGames).toFixed(1);
+        averageWardsKilled = (averageWardsKilled / numberOfGames).toFixed(1);
+        averageWardsPlaced = (averageWardsPlaced / numberOfGames).toFixed(1);
+        averageVisionScore = (averageVisionScore / numberOfGames).toFixed(1);
+        averageDamageDealtToTurrets = (averageDamageDealtToTurrets / numberOfGames).toFixed(1);
+        averageDamageDealtToObjectives = (averageDamageDealtToObjectives / numberOfGames).toFixed(1);
+        averageTotalDamageDealtToChampions = (averageTotalDamageDealtToChampions / numberOfGames).toFixed(1);
+        averagePhysicalDamageDealtToChampions = (averagePhysicalDamageDealtToChampions / numberOfGames).toFixed(1);
+        averageMagicDamageDealtToChampions = (averageMagicDamageDealtToChampions / numberOfGames).toFixed(1);
+        averageTrueDamageDealtToChampions = (averageTrueDamageDealtToChampions / numberOfGames).toFixed(1);
     
     
     averagePercentageOfPhysicalDamage = (averagePhysicalDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
     averagePercentageOfMagicDamage = (averageMagicDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
     averagePercentageOfTrueDamage = (averageTrueDamageDealtToChampions / averageTotalDamageDealtToChampions * 100).toFixed(1);
  
-    averageGoldPerMinute = (averageGoldPerMinute / numberOfGames).toFixed(2);
-    averageMinionsPerMinute = (averageMinionsPerMinute / numberOfGames).toFixed(2);
+    averageGoldPerMinute = (averageGoldPerMinute / numberOfGames).toFixed(1);
+    averageMinionsPerMinute = (averageMinionsPerMinute / numberOfGames).toFixed(1);
     averageDamageDealtToChampionsPerMinute = (averageDamageDealtToChampionsPerMinute / numberOfGames).toFixed(1);
-    winrate = (numberOfWins / numberOfGames) * 100;
+    winrate = ((numberOfWins / numberOfGames) * 100).toFixed(1);
 
     const aggregateData = {
         numberOfGames: numberOfGames,
@@ -223,36 +223,51 @@ const getOpponentDataForMatches = (accountId, matches) => {
 
         var opponentChampionAndResult = [];
         opponentDataForMatches.forEach(data => {
-            opponentChampionAndResult.push({ Champion: data.championId, Result: data.stats.win})
+            opponentChampionAndResult.push({ Champion: data.championId, Result: data.stats.win, Wins: 0, Losses: 0})
         })
 
         console.log(opponentChampionAndResult);
 
       
-        var output = opponentChampionAndResult.reduce(function (o, cur) {
+        var opponentChampionAndResultCombine = opponentChampionAndResult.reduce(function (o, cur) {
 
             // Get the index of the key-value pair.
             var occurs = o.reduce(function (n, item, i) {
                 return (item.Champion === cur.Champion) ? i : n;
             }, -1);
-
             // If the name is found,
             if (occurs >= 0) {
 
                 // append the current value to its list of values.
                 o[occurs].Result = o[occurs].Result.concat(cur.Result);
 
+                if(cur.Result){
+                    o[occurs].Losses++;
+                }else{
+                    o[occurs].Wins++;
+                }
+
                 // Otherwise,
             } else {
 
                 // add the current item to o (but make sure the value is an array).
-                var obj = { Champion: cur.Champion, Result: [cur.Result] };
+                if(cur.Result){
+                var obj = { Champion: cur.Champion, Result: [cur.Result], Wins: 0, Losses: 1};
                 o = o.concat([obj]);
+                }else{
+                var obj2 = { Champion: cur.Champion, Result: [cur.Result], Wins: 1, Losses: 0};
+                o = o.concat([obj2]);
+                }
             }
 
             return o;
         }, []);
-        console.log(output)
+        console.log(opponentChampionAndResultCombine)
+
+        opponentChampionAndResultCombine.forEach(champion => {
+            champion.winrate = ((champion.Wins / (champion.Wins + champion.Losses)) * 100).toFixed(0);
+        })
+        console.log(opponentChampionAndResultCombine);
     }}
 
 
