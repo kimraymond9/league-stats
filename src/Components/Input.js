@@ -1,4 +1,5 @@
 import React from 'react';
+import champion from '../champion.js';
 
 class Input extends React.Component {
 
@@ -6,8 +7,13 @@ class Input extends React.Component {
     super(props);
     this.state = {
       username: "",
-      championId: ""
+      championId: "",
+      champion: champion,
     };
+  }
+
+  componentWillMount(){
+
   }
   
   handleGetMatches = (event) => {
@@ -25,16 +31,17 @@ class Input extends React.Component {
   render() {
     return (
       <div>
+        
         <label>Username</label>
         <input type="text" name="Username" onChange={this.handleUsernameChanged}/>
 
         <label>Champion</label>
         <select name="Champion" onChange={this.handleChampionChanged}>
-          <option />
-          <option value="412">Thresh</option>
-          <option value="420">Illaoi</option>
-          <option value="24">Jax</option>
-          <option value="9">Fiddle</option>
+          {this.state.champion.map((option, index) =>
+            <option key={index} value={option.id}>
+              {option.name}
+            </option>
+          )}
         </select>   
         <button onClick={this.handleGetMatches}>Get Matches!</button>   
       </div>
