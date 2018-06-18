@@ -226,8 +226,6 @@ const getOpponentDataForMatches = (accountId, matches) => {
             opponentChampionAndResult.push({ Champion: data.championId, Result: data.stats.win, Wins: 0, Losses: 0})
         })
 
-        console.log(opponentChampionAndResult);
-
       
         var opponentChampionAndResultCombine = opponentChampionAndResult.reduce(function (o, cur) {
 
@@ -262,12 +260,12 @@ const getOpponentDataForMatches = (accountId, matches) => {
 
             return o;
         }, []);
-        console.log(opponentChampionAndResultCombine)
 
         opponentChampionAndResultCombine.forEach(champion => {
             champion.winrate = ((champion.Wins / (champion.Wins + champion.Losses)) * 100).toFixed(0);
         })
         console.log(opponentChampionAndResultCombine);
+        return dispatch({ type: ACTION_TYPES.GET_WINRATES, opponentChampionAndResultCombine });
     }}
 
 
