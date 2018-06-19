@@ -2,12 +2,14 @@ import summoner from './summoner-reducer';
 import matches from './match-reducer';
 import userData from './user-data-reducer';
 import champion from './champion-reducer';
-import winrates from './winrates-reducer';
+import opponentWinrates from './opponent-winrates-reducer';
+import allyWinrates from './ally-winrates-reducer';
 
 export {
   summoner,
   matches,
   userData,
   champion,
-  winrates,
+  opponentWinrates,
+  allyWinrates,
 };

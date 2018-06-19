@@ -432,12 +432,6 @@ export default [
         "title": "the Bounty Hunter"
     },
     {
-        "id": 62,
-        "key": "MonkeyKing",
-        "name": "Wukong",
-        "title": "the Monkey King"
-    },
-    {
         "id": 82,
         "key": "Mordekaiser",
         "name": "Mordekaiser",
@@ -778,6 +772,11 @@ export default [
         "key": "Warwick",
         "name": "Warwick",
         "title": "the Uncaged Wrath of Zaun"
+    },{
+        "id": 62,
+        "key": "MonkeyKing",
+        "name": "Wukong",
+        "title": "the Monkey King"
     },
     {
         "id": 498,

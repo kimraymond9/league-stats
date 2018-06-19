@@ -18,23 +18,6 @@ const getSummonerByName = summonerName => {
         );
     }
 }
-// CHAMPION
-const fetchChampionById = championId => fetch(`${CORS_URL}${RIOT_URL}static-data/v3/champions/${championId}?locale=en_US&champData=all&api_key=${API_KEY}`)
-
-const getChampionById = championId => {
-    return dispatch => {
-        return fetchChampionById(championId).then(
-            response => {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                return response.json();
-            }).then(
-            data => dispatch({ type: ACTION_TYPES.GET_CHAMPION_SUCCESS, data }),
-            err => dispatch({ type: ACTION_TYPES.GET_CHAMPION_FAILURE, err })
-        );
-    }
-}
 
 // MATCH LIST
 const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=430&queue=440&queue=700&api_key=${API_KEY}`)
@@ -88,6 +71,7 @@ const getUserDataForMatches = (accountId, matches) => {
             }
         })
     
+
     var averageKills = 0;
     var averageDeaths = 0;
     var averageAssists = 0;
@@ -198,6 +182,73 @@ const getUserDataForMatches = (accountId, matches) => {
 }
 }
 
+const getAllyDataForMatches = (accountId, matches) => {
+    return dispatch => {
+        var allyDataForMatches = [];
+
+        matches.forEach(match => {
+            var teamOfAlly;
+            for (var i = 0; i < match.participantIdentities.length; i++) {
+                if (accountId === match.participantIdentities[i].player.currentAccountId) {
+                    if (match.participants[i].teamId === 100) {
+                        teamOfAlly = 100;
+                    } else {
+                        teamOfAlly = 200;
+                    }
+                }
+            }
+            for (var j = 0; j < match.participantIdentities.length; j++) {
+                if (match.participants[j].teamId === teamOfAlly) {
+                    if(accountId !== match.participantIdentities[j].player.currentAccountId)
+                        allyDataForMatches.push(match.participants[j]);
+                }
+            }
+        })
+        var allyChampionAndResult = [];
+        allyDataForMatches.forEach(data => {
+            allyChampionAndResult.push({ Champion: data.championId, Result: data.stats.win, Wins: 0, Losses: 0 })
+        })
+
+        var allyChampionAndResultCombine = allyChampionAndResult.reduce(function (o, cur) {
+
+            // Get the index of the key-value pair.
+            var occurs = o.reduce(function (n, item, i) {
+                return (item.Champion === cur.Champion) ? i : n;
+            }, -1);
+            // If the name is found,
+            if (occurs >= 0) {
+
+                // append the current value to its list of values.
+                o[occurs].Result = o[occurs].Result.concat(cur.Result);
+
+                if (cur.Result) {
+                    o[occurs].Wins++;
+                } else {
+                    o[occurs].Losses++;
+                }
+
+                // Otherwise,
+            } else {
+
+                // add the current item to o (but make sure the value is an array).
+                if (cur.Result) {
+                    var obj = { Champion: cur.Champion, Result: [cur.Result], Wins: 1, Losses: 0 };
+                    o = o.concat([obj]);
+                } else {
+                    var obj2 = { Champion: cur.Champion, Result: [cur.Result], Wins: 0, Losses: 1 };
+                    o = o.concat([obj2]);
+                }
+            }
+
+            return o;
+        }, []);
+        allyChampionAndResultCombine.forEach(champion => {
+            champion.winrate = ((champion.Wins / (champion.Wins + champion.Losses)) * 100).toFixed(0);
+        })
+        return dispatch({ type: ACTION_TYPES.GET_ALLY_WINRATES, allyChampionAndResultCombine });
+    }
+}
+
 const getOpponentDataForMatches = (accountId, matches) => {
     return dispatch => {
         var opponentDataForMatches = [];
@@ -213,14 +264,12 @@ const getOpponentDataForMatches = (accountId, matches) => {
                     }
                 }
             }
-
             for (var j = 0; j < match.participantIdentities.length; j++) {
                 if (match.participants[j].teamId === teamOfOpponent){
                     opponentDataForMatches.push(match.participants[j]);
                 }
             }
         })
-
         var opponentChampionAndResult = [];
         opponentDataForMatches.forEach(data => {
             opponentChampionAndResult.push({ Champion: data.championId, Result: data.stats.win, Wins: 0, Losses: 0})
@@ -264,8 +313,7 @@ const getOpponentDataForMatches = (accountId, matches) => {
         opponentChampionAndResultCombine.forEach(champion => {
             champion.winrate = ((champion.Wins / (champion.Wins + champion.Losses)) * 100).toFixed(0);
         })
-        console.log(opponentChampionAndResultCombine);
-        return dispatch({ type: ACTION_TYPES.GET_WINRATES, opponentChampionAndResultCombine });
+        return dispatch({ type: ACTION_TYPES.GET_OPPONENT_WINRATES, opponentChampionAndResultCombine });
     }}
 
 
@@ -275,12 +323,12 @@ export const getDataForSummonerNameAndChampionId = (summonerName, championId) =>
 
     return (dispatch, getState) => {
         dispatch(getSummonerByName(summonerName))
-        .then(() => dispatch(getChampionById(championId)))
-        .then(() => getChampionMatchListByAccount(getState().champion.id, getState().summoner.accountId).then(data => {
+        .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId).then(data => {
             matchList = data.matches;
         }, err => err))
         .then(() => dispatch(getMatchesForMatchList(matchList)))
         .then(() => dispatch(getUserDataForMatches(getState().summoner.accountId, getState().matches)))
+        .then(() => dispatch(getAllyDataForMatches(getState().summoner.accountId, getState().matches)))
         .then(() => dispatch(getOpponentDataForMatches(getState().summoner.accountId, getState().matches)))
     }
 }
