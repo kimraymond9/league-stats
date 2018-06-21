@@ -38,17 +38,8 @@ class Info extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    userData: state.userData,
-    matchList: state.matchList
+    userData: state.userData
   }
 };
 
 export default connect(mapStateToProps)(Info);
-
-/*
-        {
-          this.props.userData.map((currentUserData, i) =>
-            <p key={i}>Score: {currentUserData.stats.kills}/{currentUserData.stats.deaths}/{currentUserData.stats.assists}</p>
-          )
-        }
-*/
