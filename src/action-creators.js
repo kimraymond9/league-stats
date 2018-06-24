@@ -56,6 +56,39 @@ const getMatchesForMatchList = matchList => {
     }
 }
 
+const fetchMatchTimelineById = matchId => fetch(`${CORS_URL}${RIOT_URL}match/v3/timelines/by-match/${matchId}?api_key=${API_KEY}`)
+
+const getMatchTimelineForMatchList = matchList => {
+    return dispatch => {
+        const promises = []
+        matchList.forEach(match => {
+            promises.push(
+                fetchMatchTimelineById(match.gameId).then(
+                    response => {
+                        if (!response.ok) {
+                            throw Error(response.statusText);
+                        }
+                        return response.json();
+                    }).then(
+                        data => {
+                            data.gameId = match.gameId;
+                            dispatch({ type: ACTION_TYPES.GET_MATCH_TIMELINE_SUCCESS, data })
+                        },
+                        err => dispatch({ type: ACTION_TYPES.GET_MATCH_TIMELINE_FAILURE, err })
+                    )
+            );
+        });
+        return Promise.all(promises);
+    }
+}
+
+const getMatchTimelineData = (accountId, matches, matchTimelines) => {
+    return dispatch => {
+        var participantIdForMatches = [];
+        console.log(matches)
+        console.log(matchTimelines)
+    }
+}
 
 // USER DATA
 const getUserDataForMatches = (accountId, matches) => {
@@ -327,6 +360,8 @@ export const getDataForSummonerNameAndChampionId = (summonerName, championId) =>
             matchList = data.matches;
         }, err => err))
         .then(() => dispatch(getMatchesForMatchList(matchList)))
+        .then(() => dispatch(getMatchTimelineForMatchList(matchList)))
+        .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
         .then(() => dispatch(getUserDataForMatches(getState().summoner.accountId, getState().matches)))
         .then(() => dispatch(getAllyDataForMatches(getState().summoner.accountId, getState().matches)))
         .then(() => dispatch(getOpponentDataForMatches(getState().summoner.accountId, getState().matches)))
