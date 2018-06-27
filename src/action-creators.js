@@ -1,5 +1,6 @@
 import { API_KEY, CORS_URL, MAX_LENGTH, RIOT_URL } from './API-constants.js';
 import ACTION_TYPES from './action-types';
+import _ from 'lodash';
 
 // ACCOUNT
 const fetchSummonerByName = summonerName => fetch(`${CORS_URL}${RIOT_URL}summoner/v3/summoners/by-name/${summonerName}?api_key=${API_KEY}`)
@@ -84,9 +85,129 @@ const getMatchTimelineForMatchList = matchList => {
 
 const getMatchTimelineData = (accountId, matches, matchTimelines) => {
     return dispatch => {
-        var participantIdForMatches = [];
-        console.log(matches)
-        console.log(matchTimelines)
+
+        var matchesOrdered = matches;
+        var matchTimelinesOrdered = matchTimelines;
+        var userParticipantIds = [];
+        
+        var csNumbersAtMinutes = {
+            0: [],
+            5: [],
+            10: [],
+            15: [],
+            20: [],
+            25: [],
+            30: []
+        }
+
+        var jungleMinionsAtMinutes = {
+            0: [],
+            5: [],
+            10: [],
+            15: [],
+            20: [],
+            25: [],
+            30: []
+        }
+
+        var xpNumbersAtMinutes = {
+            0: [],
+            5: [],
+            10: [],
+            15: [],
+            20: [],
+            25: [],
+            30: []
+        }
+
+        var goldNumbersAtMinutes = {
+            0: [],
+            5: [],
+            10: [],
+            15: [],
+            20: [],
+            25: [],
+            30: []
+        }
+
+        var averageCsNumbersAtMinutes = [];
+        var averageJungleMinionsAtMinutes = [];
+        var averageXpNumbersAtMinutes = [];
+        var averageGoldNumbersAtMinutes = [];
+            
+
+        matchesOrdered = _.orderBy(matchesOrdered, ['gameId'], ['asc'])
+        matchTimelinesOrdered = _.orderBy(matchTimelinesOrdered, ['gameId'], ['asc'])
+
+        matchesOrdered.forEach(match => {
+            for (var i = 0; i < match.participantIdentities.length; i++) {
+                if (accountId === match.participantIdentities[i].player.currentAccountId) {
+                    userParticipantIds.push(match.participants[i].participantId);
+                    break;
+                }
+            }
+        })
+
+        var participantCounter = 0;
+        matchTimelinesOrdered.forEach(matchTimeline => {
+            for(var i = 0; i <= 30; i += 5){
+                if(!(matchTimeline.frames[i])){
+                    break;
+                }
+                csNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].minionsKilled);
+                jungleMinionsAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].jungleMinionsKilled);
+                xpNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].xp);
+                goldNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].totalGold);
+            }
+            participantCounter++;
+        })
+
+        for (var minute in csNumbersAtMinutes){
+            var average;
+            for (var i = 0; i < csNumbersAtMinutes[minute].length; i++){
+                average += csNumbersAtMinutes[minute][i];
+            }
+            average /= csNumbersAtMinutes[minute].length;
+            averageCsNumbersAtMinutes.push(average);
+            average = 0;
+        }
+
+        for (var minute in jungleMinionsAtMinutes) {
+            var average;
+            for (var i = 0; i < jungleMinionsAtMinutes[minute].length; i++) {
+                average += jungleMinionsAtMinutes[minute][i];
+            }
+            average /= jungleMinionsAtMinutes[minute].length;
+            averageJungleMinionsAtMinutes.push(average);
+            average = 0;
+        }
+
+        for (var minute in xpNumbersAtMinutes) {
+            var average;
+            for (var i = 0; i < xpNumbersAtMinutes[minute].length; i++) {
+                average += xpNumbersAtMinutes[minute][i];
+            }
+            average /= xpNumbersAtMinutes[minute].length;
+            averageXpNumbersAtMinutes.push(average);
+            average = 0;
+        }
+
+        for (var minute in goldNumbersAtMinutes) {
+            var average;
+            for (var i = 0; i < goldNumbersAtMinutes[minute].length; i++) {
+                average += goldNumbersAtMinutes[minute][i];
+            }
+            average /= goldNumbersAtMinutes[minute].length;
+            averageGoldNumbersAtMinutes.push(average);
+            average = 0;
+        }
+        var aggregateData = {
+            averageCsNumbersAtMinutes: averageCsNumbersAtMinutes,
+            averageJungleMinionsAtMinutes: averageJungleMinionsAtMinutes,
+            averageXpNumbersAtMinutes: averageXpNumbersAtMinutes,
+            averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes
+        }
+        return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateData });
     }
 }
 
