@@ -1,14 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Pie } from 'react-chartjs-2';
+import { Pie, Line } from 'react-chartjs-2';
 
 
 class Graph extends React.Component {
     
     
     render() {
-
-        const data = {
+        const pieData = {
             labels: [
                 'Physical',
                 'Magic',
@@ -29,24 +28,246 @@ class Graph extends React.Component {
                     '#FF6384',
                     '#36A2EB',
                     '#FFCE56'
-                ],
+                ], 
+                maintainAspectRatio: false,
+                responsive: true,
             }]
         };
 
-        const options = {
-            maintainAspectRatio: false,
+        const pieOptions = {
             title: {
                 display: true,
                 text: 'Average Percentage Of Damage Types',
-            },
+            }
         }
 
-        if (!this.props.userData) {
-            return null;
+        const csLineData = {
+            labels: [
+                '0',
+                '5',
+                '10',
+                '15',
+                '20',
+                '25',
+                '30'
+            ],
+            datasets: [{
+                data: this.props.userTimelineData.averageCsNumbersAtMinutes, 
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'red',
+                fill: false, 
+            }]
         }
+
+        const csLineOptions = {
+            title: {
+                display: true,
+                text: 'CS At X Minutes',
+            },
+            legend: {
+                display: false,
+
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Minutes'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Creep Score'
+                    }
+                }]
+            }
+        }
+
+        const xpLineData = {
+            labels: [
+                '0',
+                '5',
+                '10',
+                '15',
+                '20',
+                '25',
+                '30'
+            ],
+            datasets: [{
+                data: this.props.userTimelineData.averageXpNumbersAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'blue',
+                fill: false,
+            }]
+        }
+
+        const xpLineOptions = {
+            title: {
+                display: true,
+                text: 'Experience Numbers At X Minutes',
+            },
+            legend: {
+                display: false,
+
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Minutes'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Experience'
+                    }
+                }]
+            }
+        }
+
+        const goldLineData = {
+            labels: [
+                '0',
+                '5',
+                '10',
+                '15',
+                '20',
+                '25',
+                '30'
+            ],
+            datasets: [{
+                data: this.props.userTimelineData.averageGoldNumbersAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'green',
+                fill: false,
+            }]
+        }
+
+        const goldLineOptions = {
+            title: {
+                display: true,
+                text: 'Gold Gained At X Minutes',
+            },
+            legend: {
+                display: false,
+
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Minutes'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Gold'
+                    }
+                }]
+            }
+        }
+
+        const jungleLineData = {
+            labels: [
+                '0',
+                '5',
+                '10',
+                '15',
+                '20',
+                '25',
+                '30'
+            ],
+            datasets: [{
+                data: this.props.userTimelineData.averageJungleMinionsAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'yellow',
+                fill: false,
+            }]
+        }
+
+        const jungleLineOptions = {
+            title: {
+                display: true,
+                text: 'Jungle CS At X Minutes',
+            },
+            legend: {
+                display: false,
+
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Minutes'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Jungle Creep Score'
+                    }
+                }]
+            }
+        }
+
         return (
             <div>
-                <Pie data={data} options={options} width={300} height={300} />
+                <div class="col-3">
+                    <Pie data={pieData} options={pieOptions} />
+                    <Line data={csLineData} options={csLineOptions} />
+                    <Line data={jungleLineData} options={jungleLineOptions} />
+                </div>
+                <div class="col-3">
+                    <Line data={xpLineData} options={xpLineOptions} />
+                    <Line data={goldLineData} options={goldLineOptions} />
+                </div>
             </div>
         );
     }
@@ -54,7 +275,8 @@ class Graph extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        userData: state.userData
+        userData: state.userData,
+        userTimelineData: state.userTimelineData
     }
 };
 

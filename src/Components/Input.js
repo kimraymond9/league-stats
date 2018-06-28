@@ -30,8 +30,7 @@ class Input extends React.Component {
 
   render() {
     return (
-      <div>
-        
+      <div class="input">
         <label>Username</label>
         <input type="text" name="Username" onChange={this.handleUsernameChanged}/>
 

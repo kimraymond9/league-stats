@@ -163,51 +163,57 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         })
 
         for (var minute in csNumbersAtMinutes){
-            var average;
+            var averageCsNumbers;
             for (var i = 0; i < csNumbersAtMinutes[minute].length; i++){
-                average += csNumbersAtMinutes[minute][i];
+                averageCsNumbers += csNumbersAtMinutes[minute][i];
             }
-            average /= csNumbersAtMinutes[minute].length;
-            averageCsNumbersAtMinutes.push(average);
-            average = 0;
+            averageCsNumbers /= csNumbersAtMinutes[minute].length;
+            averageCsNumbersAtMinutes.push(averageCsNumbers);
+            averageCsNumbers = 0;
         }
 
-        for (var minute in jungleMinionsAtMinutes) {
-            var average;
-            for (var i = 0; i < jungleMinionsAtMinutes[minute].length; i++) {
-                average += jungleMinionsAtMinutes[minute][i];
+        for (minute in jungleMinionsAtMinutes) {
+            var averageJungleMinions;
+            for (i = 0; i < jungleMinionsAtMinutes[minute].length; i++) {
+                averageJungleMinions += jungleMinionsAtMinutes[minute][i];
             }
-            average /= jungleMinionsAtMinutes[minute].length;
-            averageJungleMinionsAtMinutes.push(average);
-            average = 0;
+            averageJungleMinions /= jungleMinionsAtMinutes[minute].length;
+            averageJungleMinionsAtMinutes.push(averageJungleMinions);
+            averageJungleMinions = 0;
         }
 
-        for (var minute in xpNumbersAtMinutes) {
-            var average;
-            for (var i = 0; i < xpNumbersAtMinutes[minute].length; i++) {
-                average += xpNumbersAtMinutes[minute][i];
+        for (minute in xpNumbersAtMinutes) {
+            var averageXp;
+            for (i = 0; i < xpNumbersAtMinutes[minute].length; i++) {
+                averageXp += xpNumbersAtMinutes[minute][i];
             }
-            average /= xpNumbersAtMinutes[minute].length;
-            averageXpNumbersAtMinutes.push(average);
-            average = 0;
+            averageXp /= xpNumbersAtMinutes[minute].length;
+            averageXpNumbersAtMinutes.push(averageXp);
+            averageXp = 0;
         }
 
-        for (var minute in goldNumbersAtMinutes) {
-            var average;
-            for (var i = 0; i < goldNumbersAtMinutes[minute].length; i++) {
-                average += goldNumbersAtMinutes[minute][i];
+        for (minute in goldNumbersAtMinutes) {
+            var averageGold;
+            for (i = 0; i < goldNumbersAtMinutes[minute].length; i++) {
+                averageGold += goldNumbersAtMinutes[minute][i];
             }
-            average /= goldNumbersAtMinutes[minute].length;
-            averageGoldNumbersAtMinutes.push(average);
-            average = 0;
+            averageGold /= goldNumbersAtMinutes[minute].length;
+            averageGoldNumbersAtMinutes.push(averageGold);
+            averageGold = 0;
         }
-        var aggregateData = {
+
+        averageCsNumbersAtMinutes.splice(0, 1, 0);
+        averageJungleMinionsAtMinutes.splice(0, 1, 0);
+        averageXpNumbersAtMinutes.splice(0, 1, 0);
+        averageGoldNumbersAtMinutes.splice(0, 1, 500);
+
+        var aggregateTimelineData = {
             averageCsNumbersAtMinutes: averageCsNumbersAtMinutes,
             averageJungleMinionsAtMinutes: averageJungleMinionsAtMinutes,
             averageXpNumbersAtMinutes: averageXpNumbersAtMinutes,
             averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes
         }
-        return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateData });
+        return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });
     }
 }
 
