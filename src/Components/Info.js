@@ -6,7 +6,7 @@ class Info extends React.Component {
 
     return (
       <div>
-        <div class="col-2">
+        <div className="col-2">
           <p>Games: {this.props.userData.numberOfGames}</p>
           <p>Wins: {this.props.userData.numberOfWins}</p>
           <p>Losses: {this.props.userData.numberOfLosses}</p>
@@ -15,7 +15,7 @@ class Info extends React.Component {
           <p>Average Deaths: {this.props.userData.averageDeaths}</p>
           <p>Average Assists: {this.props.userData.averageAssists}</p>
         </div>
-        <div class="col-3">
+        <div className="col-3">
           <p>Average Minions Per Minute: {this.props.userData.averageMinionsPerMinute} CSPM</p>
           <p>Average Vision Wards Bought: {this.props.userData.averageVisionWardsBought}</p>   
           <p>Average Wards Placed: {this.props.userData.averageWardsPlaced}</p>
@@ -24,9 +24,6 @@ class Info extends React.Component {
           <p>Average Damage Dealt To Towers: {this.props.userData.averageDamageDealtToTurrets}</p>
           <p>Average Damage Dealt To Objectives: {this.props.userData.averageDamageDealtToObjectives}</p>
           <p>Average Total Damage Dealt To Champions: {this.props.userData.averageTotalDamageDealtToChampions}</p>
-          <p>Average Physical Damage To Champions: {this.props.userData.averagePhysicalDamageDealtToChampions}</p>
-          <p>Average Magic Damage To Champions: {this.props.userData.averageMagicDamageDealtToChampions}</p>
-          <p>Average True Damage To Champions: {this.props.userData.averageTrueDamageDealtToChampions}</p>
           <p>Average Damage To Champions Per Minute: {this.props.userData.averageDamageDealtToChampionsPerMinute} DPM</p>
           <p>Average Gold Earned Per Minute: {this.props.userData.averageGoldPerMinute} GPM</p>
         </div>

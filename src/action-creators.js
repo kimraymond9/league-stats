@@ -207,10 +207,70 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         averageXpNumbersAtMinutes.splice(0, 1, 0);
         averageGoldNumbersAtMinutes.splice(0, 1, 500);
 
+        var averageLevelAtMinutes = [1];
+        for (i = 1; i < averageXpNumbersAtMinutes.length; i++){
+            if (averageXpNumbersAtMinutes[i] >= 0 && averageXpNumbersAtMinutes[i] <= 279){
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 280) + 1).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 280 && averageXpNumbersAtMinutes[i] <= 659) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 660) + 2).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 660 && averageXpNumbersAtMinutes[i] <= 1139) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 1140) + 3).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 1140 && averageXpNumbersAtMinutes[i] <= 1719) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 1720) + 4).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 1720 && averageXpNumbersAtMinutes[i] <= 2399) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 2400) + 5).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 2400 && averageXpNumbersAtMinutes[i] <= 3179) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 3180) + 6).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 3180 && averageXpNumbersAtMinutes[i] <= 4059) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 4060) + 7).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 4060 && averageXpNumbersAtMinutes[i] <= 5039) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 5040) + 8).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 5040 && averageXpNumbersAtMinutes[i] <= 6119) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 6120) + 9).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 6120 && averageXpNumbersAtMinutes[i] <= 7299) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 7300) + 10).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 7300 && averageXpNumbersAtMinutes[i] <= 8579) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 8580) + 11).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 8580 && averageXpNumbersAtMinutes[i] <= 9959) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 9960) + 12).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 9960 && averageXpNumbersAtMinutes[i] <= 11439) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 11440) + 13).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 11440 && averageXpNumbersAtMinutes[i] <= 13019) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 13020) + 14).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 13020 && averageXpNumbersAtMinutes[i] <= 14699) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 14700) + 15).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 14700 && averageXpNumbersAtMinutes[i] <= 16479) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 16480) + 16).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 16480 && averageXpNumbersAtMinutes[i] <= 18359) {
+                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 18360) + 17).toFixed(1));
+            }
+            if (averageXpNumbersAtMinutes[i] >= 18360) {
+                averageLevelAtMinutes.push(18);
+            }
+        }
+
+        console.log(averageLevelAtMinutes);
+
         var aggregateTimelineData = {
             averageCsNumbersAtMinutes: averageCsNumbersAtMinutes,
             averageJungleMinionsAtMinutes: averageJungleMinionsAtMinutes,
-            averageXpNumbersAtMinutes: averageXpNumbersAtMinutes,
+            averageLevelAtMinutes: averageLevelAtMinutes,
             averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes
         }
         return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });

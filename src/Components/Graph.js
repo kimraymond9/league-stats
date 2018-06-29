@@ -15,9 +15,9 @@ class Graph extends React.Component {
             ],
             datasets: [{
                 data: [
-                    this.props.userData.averagePercentageOfPhysicalDamage,
-                    this.props.userData.averagePercentageOfMagicDamage,
-                    this.props.userData.averagePercentageOfTrueDamage
+                    this.props.userData.averagePhysicalDamageDealtToChampions,
+                    this.props.userData.averageMagicDamageDealtToChampions,
+                    this.props.userData.averageTrueDamageDealtToChampions
                 ],
                 backgroundColor: [
                     '#FF6384',
@@ -38,6 +38,21 @@ class Graph extends React.Component {
             title: {
                 display: true,
                 text: 'Average Percentage Of Damage Types',
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data['labels'][tooltipItem[0]['index']];
+                    },
+                    label: function (tooltipItem, data) {
+                        return data['datasets'][0]['data'][tooltipItem['index']];
+                    },
+                    afterLabel: function (tooltipItem, data) {
+                        var dataset = data['datasets'][0];
+                        var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
+                        return '(' + percent + '%)';
+                    }
+                }
             }
         }
 
@@ -56,22 +71,18 @@ class Graph extends React.Component {
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: 'red',
-                fill: false, 
+                backgroundColor: '#DA6678',
             }]
         }
 
         const csLineOptions = {
             title: {
                 display: true,
-                text: 'CS At X Minutes',
+                text: 'Average CS At X Minutes',
             },
             legend: {
                 display: false,
 
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
             },
             hover: {
                 mode: 'nearest',
@@ -92,6 +103,16 @@ class Graph extends React.Component {
                         labelString: 'Creep Score'
                     }
                 }]
+            }, 
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return tooltipItem[0].xLabel + ' mins';
+                    },
+                    label: function (tooltipItem, data) {
+                        return tooltipItem.yLabel.toFixed(1);
+                    }
+                }
             }
         }
 
@@ -106,26 +127,22 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
-                data: this.props.userTimelineData.averageXpNumbersAtMinutes,
+                data: this.props.userTimelineData.averageLevelAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: 'blue',
-                fill: false,
+                backgroundColor: '#8AB0CD',
             }]
         }
 
         const xpLineOptions = {
             title: {
                 display: true,
-                text: 'Experience Numbers At X Minutes',
+                text: 'Average Level At X Minutes',
             },
             legend: {
                 display: false,
 
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
             },
             hover: {
                 mode: 'nearest',
@@ -143,9 +160,19 @@ class Graph extends React.Component {
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Experience'
+                        labelString: 'Level'
                     }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return tooltipItem[0].xLabel + ' mins';
+                    },
+                    label: function (tooltipItem, data) {
+                        return tooltipItem.yLabel.toFixed(1);
+                    }
+                }
             }
         }
 
@@ -164,22 +191,18 @@ class Graph extends React.Component {
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: 'green',
-                fill: false,
+                backgroundColor: '#66B266',
             }]
         }
 
         const goldLineOptions = {
             title: {
                 display: true,
-                text: 'Gold Gained At X Minutes',
+                text: 'Average Gold Gained At X Minutes',
             },
             legend: {
                 display: false,
 
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
             },
             hover: {
                 mode: 'nearest',
@@ -200,6 +223,16 @@ class Graph extends React.Component {
                         labelString: 'Gold'
                     }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return tooltipItem[0].xLabel + ' mins';
+                    },
+                    label: function (tooltipItem, data) {
+                        return tooltipItem.yLabel.toFixed(1);
+                    }
+                }
             }
         }
 
@@ -217,23 +250,19 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageJungleMinionsAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'yellow',
-                fill: false,
+                pointBackgroundColor: 'purple',
+                backgroundColor: '#B266B2',
             }]
         }
 
         const jungleLineOptions = {
             title: {
                 display: true,
-                text: 'Jungle CS At X Minutes',
+                text: 'Average Jungle CS At X Minutes',
             },
             legend: {
                 display: false,
 
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
             },
             hover: {
                 mode: 'nearest',
@@ -254,17 +283,27 @@ class Graph extends React.Component {
                         labelString: 'Jungle Creep Score'
                     }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return tooltipItem[0].xLabel + ' mins';
+                    },
+                    label: function (tooltipItem, data) {
+                        return tooltipItem.yLabel.toFixed(1);
+                    }
+                }
             }
         }
 
         return (
             <div>
-                <div class="col-3">
+                <div className="col-3">
                     <Pie data={pieData} options={pieOptions} />
                     <Line data={csLineData} options={csLineOptions} />
                     <Line data={jungleLineData} options={jungleLineOptions} />
                 </div>
-                <div class="col-3">
+                <div className="col-3">
                     <Line data={xpLineData} options={xpLineOptions} />
                     <Line data={goldLineData} options={goldLineOptions} />
                 </div>
