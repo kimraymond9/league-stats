@@ -149,6 +149,8 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         matchesOrdered.forEach(match => {
             for (var i = 0; i < match.participantIdentities.length; i++) {
                 if (accountId === match.participantIdentities[i].player.currentAccountId) {
+                    userTeamIds.push(match.participants[i].teamId);
+                    userParticipantIds.push(match.participants[i].participantId);
                     if (match.participants[i].timeline.lane === 'BOTTOM') {
                         for (var j = 0; j < match.participantIdentities.length; j++) {
                             if (accountId !== match.participantIdentities[j].player.currentAccountId &&
@@ -158,28 +160,27 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
                                 var csOfPartner = matchTimelinesOrdered[matchCounter].frames[10].participantFrames[match.participantIdentities[j].participantId].minionsKilled;
                                 if (csOfUser > csOfPartner) {
                                     roleOfPlayer.push('ADC');
-                                    console.log(roleOfPlayer);
                                     matchCounter++;
+                                    break;
                                 } else {
                                     roleOfPlayer.push('SUPPORT');
-                                    console.log(roleOfPlayer);
                                     matchCounter++;
+                                    break;
                                 }
                             }
                         }
                     } else {
                         roleOfPlayer.push(match.participants[i].timeline.lane);
-                        console.log(roleOfPlayer);
                         matchCounter++;
+                        break;
                     }
                 }
             }
         })
 
-        console.log(roleOfPlayer);
         aggregateRoleOfPlayer = getMostCommonRole(roleOfPlayer);
-        console.log(aggregateRoleOfPlayer);
 
+        console.log(aggregateRoleOfPlayer);
         var enemyParticipantIds = [];
         var roleOfOpponent = [];
 
@@ -187,15 +188,40 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         matchesOrdered.forEach(match => {
         var opponentBottomLane = [];
             for (var i = 0; i < match.participantIdentities.length; i++) {
-                if (userTeamIds[matchCounterForOpponents] !== match.participants[i].teamId && match.participants[i].timeline.lane === 'BOTTOM'){
+                if (userTeamIds[matchCounterForOpponents] !== match.participants[i].teamId && match.participants[i].timeline.lane === 'BOTTOM' && (aggregateRoleOfPlayer === 'SUPPORT' || aggregateRoleOfPlayer === 'ADC')){
                     opponentBottomLane.push(match.participants[i]);
+                }
+                if (userTeamIds[matchCounterForOpponents] !== match.participants[i].teamId && match.participants[i].timeline.lane !== 'BOTTOM' && (aggregateRoleOfPlayer !== 'SUPPORT' || aggregateRoleOfPlayer !== 'ADC')){
+                    if (aggregateRoleOfPlayer === match.participants[i].timeline.lane){
+                        enemyParticipantIds.push(match.participants[i].timeline.participantId);
+                        break;
+                    }
+                }
+            }
+            console.log(opponentBottomLane);
+            if(opponentBottomLane.length === 2){
+                var botLaner1 = matchTimelinesOrdered[matchCounterForOpponents].frames[10].participantFrames[opponentBottomLane[0].participantId].minionsKilled;
+                var botLaner2 = matchTimelinesOrdered[matchCounterForOpponents].frames[10].participantFrames[opponentBottomLane[1].participantId].minionsKilled;
+                if(aggregateRoleOfPlayer === 'ADC'){
+                    if (botLaner1 > botLaner2){
+                        enemyParticipantIds.push(opponentBottomLane[0].participantId);
+                    }else{
+                        enemyParticipantIds.push(opponentBottomLane[1].participantId);
+                    }
+                }
+                if (aggregateRoleOfPlayer === 'SUPPORT') {
+                    if (botLaner1 > botLaner2) {
+                        enemyParticipantIds.push(opponentBottomLane[1].participantId);
+                    }else {
+                        enemyParticipantIds.push(opponentBottomLane[0].participantId);
+                    }
                 }
             }
             matchCounterForOpponents++;
-            console.log(opponentBottomLane);
         })
+        console.log(userParticipantIds)
+        console.log(enemyParticipantIds);
 
-        
         var participantCounter = 0;
         matchTimelinesOrdered.forEach(matchTimeline => {
             for(var i = 0; i <= 30; i += 5){
