@@ -1,60 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Pie, Line } from 'react-chartjs-2';
-
+import { Line } from 'react-chartjs-2';
 
 class Graph extends React.Component {
-    
-    
-    render() {
-        const pieData = {
-            labels: [
-                'Physical',
-                'Magic',
-                'True'
-            ],
-            datasets: [{
-                data: [
-                    this.props.userData.averagePhysicalDamageDealtToChampions,
-                    this.props.userData.averageMagicDamageDealtToChampions,
-                    this.props.userData.averageTrueDamageDealtToChampions
-                ],
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56'
-                ],
-                hoverBackgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56'
-                ], 
-                maintainAspectRatio: false,
-                responsive: true,
-            }]
-        };
 
-        const pieOptions = {
-            title: {
-                display: true,
-                text: 'Average Percentage Of Damage Types',
-            },
-            tooltips: {
-                callbacks: {
-                    title: function (tooltipItem, data) {
-                        return data['labels'][tooltipItem[0]['index']];
-                    },
-                    label: function (tooltipItem, data) {
-                        return data['datasets'][0]['data'][tooltipItem['index']];
-                    },
-                    afterLabel: function (tooltipItem, data) {
-                        var dataset = data['datasets'][0];
-                        var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
-                        return '(' + percent + '%)';
-                    }
-                }
-            }
-        }
+
+    render() {
 
         const csLineData = {
             labels: [
@@ -67,7 +18,7 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
-                data: this.props.userTimelineData.averageCsNumbersAtMinutes, 
+                data: this.props.userTimelineData.averageCsNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: 'red',
@@ -103,7 +54,7 @@ class Graph extends React.Component {
                         labelString: 'Creep Score'
                     }
                 }]
-            }, 
+            },
             tooltips: {
                 callbacks: {
                     title: function (tooltipItem, data) {
@@ -297,15 +248,20 @@ class Graph extends React.Component {
         }
 
         return (
-            <div>
-                <div className="col-3">
-                    <Pie data={pieData} options={pieOptions} />
-                    <Line data={csLineData} options={csLineOptions} />
-                    <Line data={jungleLineData} options={jungleLineOptions} />
-                </div>
-                <div className="col-3">
-                    <Line data={xpLineData} options={xpLineOptions} />
-                    <Line data={goldLineData} options={goldLineOptions} />
+            <div className="uk-padding-large uk-padding-remove-bottom uk-margin-bottom">
+                <div data-uk-slider>
+                    <div className="uk-position-relative">
+                        <div className="uk-slider-container">
+                            <ul className="uk-slider-items uk-child-width-1-1">
+                                <li data-uk-slider-item="0"><Line data={csLineData} options={csLineOptions} /></li>
+                                <li data-uk-slider-item="1"><Line data={jungleLineData} options={jungleLineOptions} /></li>
+                                <li data-uk-slider-item="2"><Line data={xpLineData} options={xpLineOptions} /></li>
+                                <li data-uk-slider-item="3"><Line data={goldLineData} options={goldLineOptions} /></li>
+                            </ul>
+                        </div>
+                        <a className="uk-position-center-left-out" uk-icon="icon: chevron-left; ratio: 2" href="#" data-uk-slider-item="previous"></a>
+                        <a className="uk-position-center-right-out" uk-icon="icon: chevron-right; ratio: 2" href="#" data-uk-slider-item="next"></a>
+                    </div>
                 </div>
             </div>
         );

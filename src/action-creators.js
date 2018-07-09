@@ -21,7 +21,7 @@ const getSummonerByName = summonerName => {
 }
 
 // MATCH LIST
-const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=430&queue=440&queue=700&api_key=${API_KEY}`)
+const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=440&queue=700&api_key=${API_KEY}`)
 
 const getChampionMatchListByAccount = (championId, accountId) => {
     return fetchChampionMatchListByAccount(championId, accountId).then(
@@ -89,6 +89,9 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         var matchesOrdered = matches;
         var matchTimelinesOrdered = matchTimelines;
         var userParticipantIds = [];
+        var userTeamIds = [];
+        var roleOfPlayer = [];
+        var aggregateRoleOfPlayer;
         
         var csNumbersAtMinutes = {
             0: [],
@@ -139,15 +142,60 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         matchesOrdered = _.orderBy(matchesOrdered, ['gameId'], ['asc'])
         matchTimelinesOrdered = _.orderBy(matchTimelinesOrdered, ['gameId'], ['asc'])
 
+        console.log(matchesOrdered);
+        console.log(matchTimelinesOrdered);
+
+        var matchCounter = 0;
         matchesOrdered.forEach(match => {
             for (var i = 0; i < match.participantIdentities.length; i++) {
                 if (accountId === match.participantIdentities[i].player.currentAccountId) {
-                    userParticipantIds.push(match.participants[i].participantId);
-                    break;
+                    if (match.participants[i].timeline.lane === 'BOTTOM') {
+                        for (var j = 0; j < match.participantIdentities.length; j++) {
+                            if (accountId !== match.participantIdentities[j].player.currentAccountId &&
+                                match.participants[j].timeline.lane === 'BOTTOM' &&
+                                match.participants[j].teamId === match.participants[i].teamId) {
+                                var csOfUser = matchTimelinesOrdered[matchCounter].frames[10].participantFrames[match.participantIdentities[i].participantId].minionsKilled;
+                                var csOfPartner = matchTimelinesOrdered[matchCounter].frames[10].participantFrames[match.participantIdentities[j].participantId].minionsKilled;
+                                if (csOfUser > csOfPartner) {
+                                    roleOfPlayer.push('ADC');
+                                    console.log(roleOfPlayer);
+                                    matchCounter++;
+                                } else {
+                                    roleOfPlayer.push('SUPPORT');
+                                    console.log(roleOfPlayer);
+                                    matchCounter++;
+                                }
+                            }
+                        }
+                    } else {
+                        roleOfPlayer.push(match.participants[i].timeline.lane);
+                        console.log(roleOfPlayer);
+                        matchCounter++;
+                    }
                 }
             }
         })
 
+        console.log(roleOfPlayer);
+        aggregateRoleOfPlayer = getMostCommonRole(roleOfPlayer);
+        console.log(aggregateRoleOfPlayer);
+
+        var enemyParticipantIds = [];
+        var roleOfOpponent = [];
+
+        var matchCounterForOpponents = 0;
+        matchesOrdered.forEach(match => {
+        var opponentBottomLane = [];
+            for (var i = 0; i < match.participantIdentities.length; i++) {
+                if (userTeamIds[matchCounterForOpponents] !== match.participants[i].teamId && match.participants[i].timeline.lane === 'BOTTOM'){
+                    opponentBottomLane.push(match.participants[i]);
+                }
+            }
+            matchCounterForOpponents++;
+            console.log(opponentBottomLane);
+        })
+
+        
         var participantCounter = 0;
         matchTimelinesOrdered.forEach(matchTimeline => {
             for(var i = 0; i <= 30; i += 5){
@@ -264,9 +312,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
                 averageLevelAtMinutes.push(18);
             }
         }
-
-        console.log(averageLevelAtMinutes);
-
         var aggregateTimelineData = {
             averageCsNumbersAtMinutes: averageCsNumbersAtMinutes,
             averageJungleMinionsAtMinutes: averageJungleMinionsAtMinutes,
@@ -275,6 +320,13 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         }
         return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });
     }
+}
+
+const getMostCommonRole = (arrayOfRoles) => {
+    return arrayOfRoles.sort((a, b) =>
+        arrayOfRoles.filter(v => v === a).length
+        - arrayOfRoles.filter(v => v === b).length
+    ).pop();
 }
 
 // USER DATA
