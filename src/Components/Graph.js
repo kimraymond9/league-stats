@@ -18,21 +18,33 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
+                label: "You",
                 data: this.props.userTimelineData.averageCsNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
+                pointBackgroundColor: 'blue',
+                backgroundColor: 'blue',
+                fill: false,
+            },
+            {   
+                label: "Opponent",
+                data: this.props.userTimelineData.averageOpponentCsNumbersAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
                 pointBackgroundColor: 'red',
-                backgroundColor: '#DA6678',
-            }]
+                backgroundColor: 'red',
+                fill: false,
+            }
+            ]
         }
 
         const csLineOptions = {
             title: {
                 display: true,
-                text: 'Average CS At X Minutes',
+                text: 'Average Lane CS At X Minutes',
             },
             legend: {
-                display: false,
+                display: true,
 
             },
             hover: {
@@ -78,11 +90,22 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
+                label: "You",
                 data: this.props.userTimelineData.averageLevelAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
+                pointBackgroundColor: 'red',
+                backgroundColor: 'red',
+                fill: false,
+            },
+            {
+                label: "Opponent",
+                data: this.props.userTimelineData.averageOpponentLevelAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
                 pointBackgroundColor: 'blue',
-                backgroundColor: '#8AB0CD',
+                backgroundColor: 'blue',
+                fill: false,
             }]
         }
 
@@ -92,7 +115,7 @@ class Graph extends React.Component {
                 text: 'Average Level At X Minutes',
             },
             legend: {
-                display: false,
+                display: true,
 
             },
             hover: {
@@ -138,11 +161,22 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
+                label: "You",
                 data: this.props.userTimelineData.averageGoldNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'green',
-                backgroundColor: '#66B266',
+                pointBackgroundColor: 'red',
+                backgroundColor: 'red',
+                fill: false,
+            },
+            {
+                label: "Opponent",
+                data: this.props.userTimelineData.averageOpponentGoldNumbersAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'blue',
+                backgroundColor: 'blue',
+                fill: false,
             }]
         }
 
@@ -152,7 +186,7 @@ class Graph extends React.Component {
                 text: 'Average Gold Gained At X Minutes',
             },
             legend: {
-                display: false,
+                display: true,
 
             },
             hover: {
@@ -198,11 +232,22 @@ class Graph extends React.Component {
                 '30'
             ],
             datasets: [{
+                label: "You",
                 data: this.props.userTimelineData.averageJungleMinionsAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'purple',
-                backgroundColor: '#B266B2',
+                pointBackgroundColor: 'red',
+                backgroundColor: 'red',
+                fill: false,
+            },
+            {
+                label: "Opponent",
+                data: this.props.userTimelineData.averageOpponentJungleMinionsAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'blue',
+                backgroundColor: 'blue',
+                fill: false,
             }]
         }
 
@@ -212,7 +257,7 @@ class Graph extends React.Component {
                 text: 'Average Jungle CS At X Minutes',
             },
             legend: {
-                display: false,
+                display: true,
 
             },
             hover: {
