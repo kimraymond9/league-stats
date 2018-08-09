@@ -11,7 +11,7 @@ import { configureStore } from './combined-reducers';
 const store = configureStore();
 
 ReactDOM.render(<Provider store={store}>
-  <div>
+  <div className="application">
     <App />
     <Input dispatch={store.dispatch} getDataForSummonerNameAndChampionId={getDataForSummonerNameAndChampionId}/>
     <Graph />

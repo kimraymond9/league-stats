@@ -1,9 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Line } from 'react-chartjs-2';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '../../node_modules/@material-ui/core';
 
 class Graph extends React.Component {
+    state ={
+        value: 0,
+    }
 
+    handleChange = (event, value) => {
+        this.setState({ value });
+    };
 
     render() {
 
@@ -22,8 +33,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageCsNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'blue',
-                backgroundColor: 'blue',
+                pointBackgroundColor: '#00CC66',
+                backgroundColor: '#00CC66',
                 fill: false,
             },
             {   
@@ -31,8 +42,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageOpponentCsNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'red',
-                backgroundColor: 'red',
+                pointBackgroundColor: '#f50057',
+                backgroundColor: '#f50057',
                 fill: false,
             }
             ]
@@ -94,8 +105,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageLevelAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'red',
-                backgroundColor: 'red',
+                pointBackgroundColor: '#00CC66',
+                backgroundColor: '#00CC66',
                 fill: false,
             },
             {
@@ -103,8 +114,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageOpponentLevelAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'blue',
-                backgroundColor: 'blue',
+                pointBackgroundColor: '#f50057',
+                backgroundColor: '#f50057',
                 fill: false,
             }]
         }
@@ -165,8 +176,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageGoldNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'red',
-                backgroundColor: 'red',
+                pointBackgroundColor: '#00CC66',
+                backgroundColor: '#00CC66',
                 fill: false,
             },
             {
@@ -174,8 +185,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageOpponentGoldNumbersAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'blue',
-                backgroundColor: 'blue',
+                pointBackgroundColor: '#f50057',
+                backgroundColor: '#f50057',
                 fill: false,
             }]
         }
@@ -236,8 +247,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageJungleMinionsAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'red',
-                backgroundColor: 'red',
+                pointBackgroundColor: '#00CC66',
+                backgroundColor: '#00CC66',
                 fill: false,
             },
             {
@@ -245,8 +256,8 @@ class Graph extends React.Component {
                 data: this.props.userTimelineData.averageOpponentJungleMinionsAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
-                pointBackgroundColor: 'blue',
-                backgroundColor: 'blue',
+                pointBackgroundColor: '#f50057',
+                backgroundColor: '#f50057',
                 fill: false,
             }]
         }
@@ -292,22 +303,29 @@ class Graph extends React.Component {
             }
         }
 
+        const { value } = this.state;
+
+        function TabContainer(props) {
+            return (
+                <Typography component="div" style={{ padding: 8 * 3 }}>
+                    {props.children}
+                </Typography>
+            );
+        }
         return (
-            <div className="uk-padding-large uk-padding-remove-bottom uk-margin-bottom">
-                <div data-uk-slider>
-                    <div className="uk-position-relative">
-                        <div className="uk-slider-container">
-                            <ul className="uk-slider-items uk-child-width-1-1">
-                                <li data-uk-slider-item="0"><Line data={csLineData} options={csLineOptions} /></li>
-                                <li data-uk-slider-item="1"><Line data={jungleLineData} options={jungleLineOptions} /></li>
-                                <li data-uk-slider-item="2"><Line data={xpLineData} options={xpLineOptions} /></li>
-                                <li data-uk-slider-item="3"><Line data={goldLineData} options={goldLineOptions} /></li>
-                            </ul>
-                        </div>
-                        <a className="uk-position-center-left-out" uk-icon="icon: chevron-left; ratio: 2" href="#" data-uk-slider-item="previous"></a>
-                        <a className="uk-position-center-right-out" uk-icon="icon: chevron-right; ratio: 2" href="#" data-uk-slider-item="next"></a>
-                    </div>
-                </div>
+            <div className="graphs">
+                <AppBar position="static" color="primary">
+                    <Tabs value={value} onChange={this.handleChange}>
+                        <Tab label="Item One" />
+                        <Tab label="Item Two" />
+                        <Tab label="Item Three"/>
+                        <Tab label="Item Four"/>
+                    </Tabs>
+                </AppBar>
+                {value === 0 && <TabContainer><Line data={csLineData} options={csLineOptions} /></TabContainer>}
+                {value === 1 && <TabContainer><Line data={jungleLineData} options={jungleLineOptions} /></TabContainer>}
+                {value === 2 && <TabContainer><Line data={xpLineData} options={xpLineOptions} /></TabContainer>}
+                {value === 3 && <TabContainer><Line data={goldLineData} options={goldLineOptions} /></TabContainer>}
             </div>
         );
     }

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^1.4.2",
     "chart.js": "^2.7.2",
     "hoek": "^5.0.3",
-    "jquery": "^3.3.1",
     "lodash": "^4.17.10",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
@@ -13,6 +13,7 @@
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.0",
+    "react-select": "^2.0.0",
     "redux": "^3.7.2",
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
@@ -26,6 +27,5 @@
   },
   "devDependencies": {
     "redux-devtools": "^3.4.1"
-  },
-  "proxy": "http://localhost:5000/"
+  }
 }
