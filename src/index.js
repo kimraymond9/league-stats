@@ -13,8 +13,15 @@ const store = configureStore();
 ReactDOM.render(<Provider store={store}>
   <div className="application">
     <App />
-    <Input dispatch={store.dispatch} getDataForSummonerNameAndChampionId={getDataForSummonerNameAndChampionId}/>
-    <Graph />
+    <div className="w3-row">
+      <div className="w3-col side w3-container"></div>
+      <div className="w3-col firstColumn w3-container">
+        <Input dispatch={store.dispatch} getDataForSummonerNameAndChampionId={getDataForSummonerNameAndChampionId}/>
+      </div>
+      <div className="w3-col secondColumn w3-container">
+        <Graph />
+      </div>
+    </div>
   </div>
 </Provider>, document.getElementById('root'));
 

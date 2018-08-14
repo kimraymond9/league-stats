@@ -3,10 +3,12 @@ import logo from '../logo.png';
 import '../App.css';
 
 const App = () => (
-  <div className="App">
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo"/>
-    </header>
+  <div className="App w3-row">
+    <div className="w3-display-container w3-content w3-wide">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo"/>
+      </header>
+    </div>
   </div>
 );
 

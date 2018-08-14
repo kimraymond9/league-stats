@@ -5,7 +5,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '../../node_modules/@material-ui/core';
+import SwipeableViews from 'react-swipeable-views';
+import '../App.css'
 
 class Graph extends React.Component {
     state ={
@@ -14,7 +15,15 @@ class Graph extends React.Component {
 
     handleChange = (event, value) => {
         this.setState({ value });
+        event.preventDefault();
     };
+
+    handleChangeIndex = (event, index) => {
+        event.preventDefault();
+        this.setState({ value: index });
+    };
+
+    
 
     render() {
 
@@ -313,19 +322,24 @@ class Graph extends React.Component {
             );
         }
         return (
-            <div className="graphs">
+            <div className="graph">
                 <AppBar position="static" color="primary">
-                    <Tabs value={value} onChange={this.handleChange}>
-                        <Tab label="Item One" />
-                        <Tab label="Item Two" />
-                        <Tab label="Item Three"/>
-                        <Tab label="Item Four"/>
+                    <Tabs value={value} onChange={this.handleChange} fullWidth>
+                        <Tab label="CS" />
+                        <Tab label="Jungle CS" />
+                        <Tab label="Experience"/>
+                        <Tab label="Gold"/>
                     </Tabs>
                 </AppBar>
-                {value === 0 && <TabContainer><Line data={csLineData} options={csLineOptions} /></TabContainer>}
-                {value === 1 && <TabContainer><Line data={jungleLineData} options={jungleLineOptions} /></TabContainer>}
-                {value === 2 && <TabContainer><Line data={xpLineData} options={xpLineOptions} /></TabContainer>}
-                {value === 3 && <TabContainer><Line data={goldLineData} options={goldLineOptions} /></TabContainer>}
+                <SwipeableViews
+                    index={this.state.value}
+                    onChangeIndex={this.handleChangeIndex}
+                >
+                    <TabContainer><Line data={csLineData} options={csLineOptions} /></TabContainer>
+                    <TabContainer><Line data={jungleLineData} options={jungleLineOptions} /></TabContainer>
+                    <TabContainer><Line data={xpLineData} options={xpLineOptions} /></TabContainer>
+                    <TabContainer><Line data={goldLineData} options={goldLineOptions} /></TabContainer>
+                </SwipeableViews>
             </div>
         );
     }

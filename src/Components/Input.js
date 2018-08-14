@@ -2,6 +2,7 @@ import React from 'react';
 import champion from '../champion.js';
 import Select from 'react-select';
 import Button from '@material-ui/core/Button';
+import '../App.css'
 
 
 const options = champion.map(option => ({
@@ -40,8 +41,9 @@ class Input extends React.Component {
   render() {
     const { selectedOption } = this.state;
 
-    return (
-        <div className = "input">
+    return ( 
+      <div className="input">
+        <div className="component">
             <input
               className="Username"
               placeholder="Username"
@@ -49,6 +51,8 @@ class Input extends React.Component {
                 this.handleUsernameChanged
               }
             />
+        </div>
+        <div className="component">
             <Select
               className="options"
               placeholder="Champion"
@@ -56,14 +60,18 @@ class Input extends React.Component {
               onChange={this.handleChange}
               options={options}
             />
-            <Button 
-            variant="contained"
-            color="secondary"
-            onClick = {
-              this.handleGetMatches
-            }> Get Matches 
-            </Button>
         </div>
+        <div className="component">
+            <Button
+              className="submit"
+              variant="contained"
+              color="primary"
+              onClick = {
+                this.handleGetMatches
+              }> Get Matches 
+              </Button>
+        </div>
+      </div>
     );
   }
 }
