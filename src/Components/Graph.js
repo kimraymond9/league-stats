@@ -44,6 +44,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#00CC66',
                 backgroundColor: '#00CC66',
+                borderColor: '#00CC66',
                 fill: false,
             },
             {   
@@ -53,6 +54,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#f50057',
                 backgroundColor: '#f50057',
+                borderColor: '#f50057',
                 fill: false,
             }
             ]
@@ -90,7 +92,7 @@ class Graph extends React.Component {
             tooltips: {
                 callbacks: {
                     title: function (tooltipItem, data) {
-                        return tooltipItem[0].xLabel + ' mins';
+                        return tooltipItem[0].xLabel + ' min';
                     },
                     label: function (tooltipItem, data) {
                         return tooltipItem.yLabel.toFixed(1);
@@ -99,7 +101,7 @@ class Graph extends React.Component {
             }
         }
 
-        const xpLineData = {
+        const cspmLineData = {
             labels: [
                 '0',
                 '5',
@@ -111,28 +113,32 @@ class Graph extends React.Component {
             ],
             datasets: [{
                 label: "You",
-                data: this.props.userTimelineData.averageLevelAtMinutes,
+                data: this.props.userTimelineData.averageCsNumbersPerMinuteAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: '#00CC66',
                 backgroundColor: '#00CC66',
+                borderColor: '#00CC66',
                 fill: false,
             },
             {
                 label: "Opponent",
-                data: this.props.userTimelineData.averageOpponentLevelAtMinutes,
+                data: this.props.userTimelineData.averageOpponentCsNumbersPerMinuteAtMinutes,
                 maintainAspectRatio: false,
                 responsive: true,
                 pointBackgroundColor: '#f50057',
                 backgroundColor: '#f50057',
+                borderColor: '#f50057',
+                
                 fill: false,
-            }]
+            }
+            ]
         }
 
-        const xpLineOptions = {
+        const cspmLineOptions = {
             title: {
                 display: true,
-                text: 'Average Level At X Minutes',
+                text: 'Average Lane CSPM At X Minutes',
             },
             legend: {
                 display: true,
@@ -154,14 +160,14 @@ class Graph extends React.Component {
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Level'
+                        labelString: 'Creep Score Per Minute'
                     }
                 }]
             },
             tooltips: {
                 callbacks: {
                     title: function (tooltipItem, data) {
-                        return tooltipItem[0].xLabel + ' mins';
+                        return tooltipItem[0].xLabel + ' min';
                     },
                     label: function (tooltipItem, data) {
                         return tooltipItem.yLabel.toFixed(1);
@@ -187,6 +193,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#00CC66',
                 backgroundColor: '#00CC66',
+                borderColor: '#00CC66',
                 fill: false,
             },
             {
@@ -196,6 +203,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#f50057',
                 backgroundColor: '#f50057',
+                borderColor: '#f50057',
                 fill: false,
             }]
         }
@@ -258,6 +266,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#00CC66',
                 backgroundColor: '#00CC66',
+                borderColor: '#00CC66',
                 fill: false,
             },
             {
@@ -267,6 +276,7 @@ class Graph extends React.Component {
                 responsive: true,
                 pointBackgroundColor: '#f50057',
                 backgroundColor: '#f50057',
+                borderColor: '#f50057',
                 fill: false,
             }]
         }
@@ -312,6 +322,101 @@ class Graph extends React.Component {
             }
         }
 
+        const KDALineData = {
+            labels: [
+                '0',
+                '5',
+                '10',
+                '15',
+                '20',
+                '25',
+                '30'
+            ],
+            datasets: [{
+                label: "Kills",
+                data: this.props.userTimelineData.averageKillsAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: '#00CC66',
+                backgroundColor: '#00CC66',
+                borderColor: '#00CC66',
+                fill: false,
+            },
+            {
+                label: "Deaths",
+                data: this.props.userTimelineData.averageDeathsAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: '#f50057',
+                backgroundColor: '#f50057',
+                borderColor: '#f50057',
+                fill: false,
+            },
+            {
+                label: "Assists",
+                data: this.props.userTimelineData.averageAssistsAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: '#1919ff',
+                backgroundColor: '#1919ff',
+                borderColor: '#1919ff',
+                fill: false,
+            },
+            {
+                label: "KDA",
+                data: this.props.userTimelineData.averageKdaAtMinutes,
+                maintainAspectRatio: false,
+                responsive: true,
+                pointBackgroundColor: 'black',
+                backgroundColor: 'black',
+                borderColor: 'black',
+                fill: false,
+            },
+        ]
+        }
+
+        const KDALineOptions = {
+            title: {
+                display: true,
+                text: 'Average KDA At X Minutes',
+            },
+            legend: {
+                display: true,
+
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Minutes'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'KDA'
+                    }
+                }]
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return tooltipItem[0].xLabel + ' mins';
+                    },
+                    label: function (tooltipItem, data) {
+                        return tooltipItem.yLabel.toFixed(1);
+                    }
+                }
+            }
+        }
+
+
         const { value } = this.state;
 
         function TabContainer(props) {
@@ -326,9 +431,10 @@ class Graph extends React.Component {
                 <AppBar position="static" color="primary">
                     <Tabs value={value} onChange={this.handleChange} fullWidth>
                         <Tab label="CS" />
+                        <Tab label="CSPM" />
                         <Tab label="Jungle CS" />
-                        <Tab label="Experience"/>
                         <Tab label="Gold"/>
+                        <Tab label="KDA" />
                     </Tabs>
                 </AppBar>
                 <SwipeableViews
@@ -336,9 +442,10 @@ class Graph extends React.Component {
                     onChangeIndex={this.handleChangeIndex}
                 >
                     <TabContainer><Line data={csLineData} options={csLineOptions} /></TabContainer>
+                    <TabContainer><Line data={cspmLineData} options={cspmLineOptions} /></TabContainer>
                     <TabContainer><Line data={jungleLineData} options={jungleLineOptions} /></TabContainer>
-                    <TabContainer><Line data={xpLineData} options={xpLineOptions} /></TabContainer>
                     <TabContainer><Line data={goldLineData} options={goldLineOptions} /></TabContainer>
+                    <TabContainer><Line data={KDALineData} options={KDALineOptions} /></TabContainer>
                 </SwipeableViews>
             </div>
         );

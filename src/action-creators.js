@@ -109,16 +109,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             30: []
         }
 
-        var xpNumbersAtMinutes = {
-            0: [],
-            5: [],
-            10: [],
-            15: [],
-            20: [],
-            25: [],
-            30: []
-        }
-
         var goldNumbersAtMinutes = {
             0: [],
             5: [],
@@ -149,16 +139,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             30: []
         }
 
-        var opponentXpNumbersAtMinutes = {
-            0: [],
-            5: [],
-            10: [],
-            15: [],
-            20: [],
-            25: [],
-            30: []
-        }
-
         var opponentGoldNumbersAtMinutes = {
             0: [],
             5: [],
@@ -169,14 +149,49 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             30: []
         }
 
+        var yourKillsAtMinutes = {
+            0: 0,
+            5: 0,
+            10: 0,
+            15: 0,
+            20: 0,
+            25: 0,
+            30: 0
+        }
+
+        var yourDeathsAtMinutes = {
+            0: 0,
+            5: 0,
+            10: 0,
+            15: 0,
+            20: 0,
+            25: 0,
+            30: 0
+        }
+
+        var yourAssistsAtMinutes = {
+            0: 0,
+            5: 0,
+            10: 0,
+            15: 0,
+            20: 0,
+            25: 0,
+            30: 0
+        }
+        
+        var averageKillsAtMinutes = [];
+        var averageDeathsAtMinutes = [];
+        var averageAssistsAtMinutes = [];
+        var averageKdaAtMinutes = [];
+
         var averageCsNumbersAtMinutes = [];
+        var averageCsNumbersPerMinuteAtMinutes = [];
         var averageJungleMinionsAtMinutes = [];
-        var averageXpNumbersAtMinutes = [];
         var averageGoldNumbersAtMinutes = [];
             
         var averageOpponentCsNumbersAtMinutes = [];
+        var averageOpponentCsNumbersPerMinuteAtMinutes = [];
         var averageOpponentJungleMinionsAtMinutes = [];
-        var averageOpponentXpNumbersAtMinutes = [];
         var averageOpponentGoldNumbersAtMinutes = [];
 
         matchesOrdered = _.orderBy(matchesOrdered, ['gameId'], ['asc'])
@@ -186,10 +201,11 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         console.log(matchTimelinesOrdered);
 
         var userParticipantIds = [];
+        var enemyParticipantIds = [];
         var userTeamIds = [];
         var roleOfPlayer = [];
         var aggregateRoleOfPlayer;
-
+        
         var matchCounter = 0;
         matchesOrdered.forEach(match => {
             var yourBottomLane = [];
@@ -222,7 +238,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         })
         aggregateRoleOfPlayer = getMostCommonRole(roleOfPlayer);
 
-        var enemyParticipantIds = [];
         var matchCounterForOpponents = 0;
         matchesOrdered.forEach(match => {
             var opponentBottomLane = [];
@@ -257,8 +272,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             }
             matchCounterForOpponents++;
         })
-        console.log(userParticipantIds);
-        console.log(enemyParticipantIds);
 
         var participantCounter = 0;
         matchTimelinesOrdered.forEach(matchTimeline => {
@@ -269,38 +282,143 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
 
                 csNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].minionsKilled);
                 jungleMinionsAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].jungleMinionsKilled);
-                xpNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].xp);
                 goldNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[userParticipantIds[participantCounter]].totalGold);
                 
                 opponentCsNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[enemyParticipantIds[participantCounter]].minionsKilled);
                 opponentJungleMinionsAtMinutes[i].push(matchTimeline.frames[i].participantFrames[enemyParticipantIds[participantCounter]].jungleMinionsKilled);
-                opponentXpNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[enemyParticipantIds[participantCounter]].xp);
                 opponentGoldNumbersAtMinutes[i].push(matchTimeline.frames[i].participantFrames[enemyParticipantIds[participantCounter]].totalGold);
             }
             participantCounter++;
         })
 
-        for (var minute in csNumbersAtMinutes){
+            var matchTimelineCounter = 0;
+            matchTimelinesOrdered.forEach(matchTimeline => {
+                for (var i = 0; i <= 30; i++) {
+                    if (matchTimeline.frames[i] === undefined) {
+                        break;
+                    }
+                        
+                    for (var j = 0; j < matchTimeline.frames[i].events.length; j++) {
+                        if (matchTimeline.frames[i].events[j].type === "CHAMPION_KILL" && matchTimeline.frames[i].events[j].killerId === userParticipantIds[matchTimelineCounter]) {
+                            if (i >= 0 && i <= 4) {
+                                yourKillsAtMinutes[5]++;
+                            }
+                            if (i >= 5 && i <= 9) {
+                                yourKillsAtMinutes[10]++;
+                            }
+                            if (i >= 10 && i <= 14) {
+                                yourKillsAtMinutes[15]++;
+                            }
+                            if (i >= 15 && i <= 19) {
+                                yourKillsAtMinutes[20]++;
+                            }
+                            if (i >= 20 && i <= 24) {
+                                yourKillsAtMinutes[25]++;
+                            }
+                            if (i >= 25 && i <= 30) {
+                                yourKillsAtMinutes[30]++;
+                            }
+                        }
+                        if (matchTimeline.frames[i].events[j].type === "CHAMPION_KILL" && matchTimeline.frames[i].events[j].victimId === userParticipantIds[matchTimelineCounter]) {
+                            if (i >= 0 && i <= 4) {
+                                yourDeathsAtMinutes[5]++;
+                            }
+                            if (i >= 5 && i <= 9) {
+                                yourDeathsAtMinutes[10]++;
+                            }
+                            if (i >= 10 && i <= 14) {
+                                yourDeathsAtMinutes[15]++;
+                            }
+                            if (i >= 15 && i <= 19) {
+                                yourDeathsAtMinutes[20]++;
+                            }
+                            if (i >= 20 && i <= 24) {
+                                yourDeathsAtMinutes[25]++;
+                            }
+                            if (i >= 25 && i <= 30) {
+                                yourDeathsAtMinutes[30]++;
+                            }
+                        }
+                        if (matchTimeline.frames[i].events[j].type === "CHAMPION_KILL" && matchTimeline.frames[i].events[j].assistingParticipantIds.includes(userParticipantIds[matchTimelineCounter])){
+                            if (i >= 0 && i <= 4) {
+                                yourAssistsAtMinutes[5]++;
+                            }
+                            if (i >= 5 && i <= 9) {
+                                yourAssistsAtMinutes[10]++;
+                            }
+                            if (i >= 10 && i <= 14) {
+                                yourAssistsAtMinutes[15]++;
+                            }
+                            if (i >= 15 && i <= 19) {
+                                yourAssistsAtMinutes[20]++;
+                            }
+                            if (i >= 20 && i <= 24) {
+                                yourAssistsAtMinutes[25]++;
+                            }
+                            if (i >= 25 && i <= 30) {
+                                yourAssistsAtMinutes[30]++;
+                            }
+                        }
+                    }
+                }
+                matchTimelineCounter++
+            })
+
+        var totalKills = 0;
+        for (var minute in yourKillsAtMinutes){
+            var averageKills = yourKillsAtMinutes[minute] / matchTimelinesOrdered.length;
+            totalKills += averageKills;
+            averageKillsAtMinutes.push(totalKills)
+        }
+
+        var totalDeaths = 0;
+        for (minute in yourDeathsAtMinutes) {
+            var averageDeaths = yourDeathsAtMinutes[minute] / matchTimelinesOrdered.length;
+            totalDeaths += averageDeaths;
+            averageDeathsAtMinutes.push(totalDeaths)
+        }
+
+        var totalAssists = 0;
+        for (minute in yourAssistsAtMinutes) {
+            var averageAssists = yourAssistsAtMinutes[minute] / matchTimelinesOrdered.length;
+            totalAssists += averageAssists;
+            averageAssistsAtMinutes.push(totalAssists)
+        }
+
+        for (var i = 0; i < averageKillsAtMinutes.length;i++){
+            averageKdaAtMinutes.push((averageKillsAtMinutes[i] + averageAssistsAtMinutes[i]) / averageDeathsAtMinutes[i]);
+        }
+
+        for (minute in csNumbersAtMinutes){
             var averageCsNumbers;
-            for (var i = 0; i < csNumbersAtMinutes[minute].length; i++){
+            var averageCsNumbersPerMinute;
+            for (i = 0; i < csNumbersAtMinutes[minute].length; i++){
                 averageCsNumbers += csNumbersAtMinutes[minute][i];
             }
             averageCsNumbers /= csNumbersAtMinutes[minute].length;
+            averageCsNumbersPerMinute = averageCsNumbers / minute;
             averageCsNumbersAtMinutes.push(averageCsNumbers);
+            averageCsNumbersPerMinuteAtMinutes.push(averageCsNumbersPerMinute);
             averageCsNumbers = 0;
+            averageCsNumbersPerMinute = 0;
         }
 
         for (minute in opponentCsNumbersAtMinutes) {
             var averageOpponentCsNumbers;
+            var averageOpponentCsNumbersPerMinute;
             for (i = 0; i < opponentCsNumbersAtMinutes[minute].length; i++) {
                 if (opponentCsNumbersAtMinutes[minute][i] !== undefined){
                     averageOpponentCsNumbers += opponentCsNumbersAtMinutes[minute][i];
                 }
             }
             averageOpponentCsNumbers /= opponentCsNumbersAtMinutes[minute].length;
+            averageOpponentCsNumbersPerMinute = averageOpponentCsNumbers / minute;
             averageOpponentCsNumbersAtMinutes.push(averageOpponentCsNumbers);
+            averageOpponentCsNumbersPerMinuteAtMinutes.push(averageOpponentCsNumbersPerMinute);
             averageOpponentCsNumbers = 0;
+            averageOpponentCsNumbersPerMinute = 0;
         }
+        
 
         for (minute in jungleMinionsAtMinutes) {
             var averageJungleMinions;
@@ -322,28 +440,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             averageOpponentJungleMinions /= opponentJungleMinionsAtMinutes[minute].length;
             averageOpponentJungleMinionsAtMinutes.push(averageOpponentJungleMinions);
             averageOpponentJungleMinions = 0;
-        }
-
-        for (minute in xpNumbersAtMinutes) {
-            var averageXp;
-            for (i = 0; i < xpNumbersAtMinutes[minute].length; i++) {
-                averageXp += xpNumbersAtMinutes[minute][i];
-            }
-            averageXp /= xpNumbersAtMinutes[minute].length;
-            averageXpNumbersAtMinutes.push(averageXp);
-            averageXp = 0;
-        }
-
-        for (minute in opponentXpNumbersAtMinutes) {
-            var averageOpponentXp;
-            for (i = 0; i < opponentXpNumbersAtMinutes[minute].length; i++) {
-                if (opponentXpNumbersAtMinutes[minute][i] !== undefined){
-                    averageOpponentXp += opponentXpNumbersAtMinutes[minute][i];
-                }
-            }
-            averageOpponentXp /= opponentXpNumbersAtMinutes[minute].length;
-            averageOpponentXpNumbersAtMinutes.push(averageOpponentXp);
-            averageOpponentXp = 0;
         }
 
         for (minute in goldNumbersAtMinutes) {
@@ -369,143 +465,30 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
         }
 
         averageCsNumbersAtMinutes.splice(0, 1, 0);
+        averageCsNumbersPerMinuteAtMinutes.splice(0, 1, 0);
         averageJungleMinionsAtMinutes.splice(0, 1, 0);
-        averageXpNumbersAtMinutes.splice(0, 1, 0);
         averageGoldNumbersAtMinutes.splice(0, 1, 500);
+        averageKdaAtMinutes.splice(0, 1, 0);
 
         averageOpponentCsNumbersAtMinutes.splice(0, 1, 0);
+        averageOpponentCsNumbersPerMinuteAtMinutes.splice(0, 1, 0);
         averageOpponentJungleMinionsAtMinutes.splice(0, 1, 0);
-        averageOpponentXpNumbersAtMinutes.splice(0, 1, 0);
         averageOpponentGoldNumbersAtMinutes.splice(0, 1, 500);
 
-        var averageLevelAtMinutes = [1];
-        for (i = 1; i < averageXpNumbersAtMinutes.length; i++){
-            if (averageXpNumbersAtMinutes[i] >= 0 && averageXpNumbersAtMinutes[i] <= 279){
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 280) + 1).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 280 && averageXpNumbersAtMinutes[i] <= 659) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 660) + 2).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 660 && averageXpNumbersAtMinutes[i] <= 1139) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 1140) + 3).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 1140 && averageXpNumbersAtMinutes[i] <= 1719) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 1720) + 4).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 1720 && averageXpNumbersAtMinutes[i] <= 2399) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 2400) + 5).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 2400 && averageXpNumbersAtMinutes[i] <= 3179) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 3180) + 6).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 3180 && averageXpNumbersAtMinutes[i] <= 4059) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 4060) + 7).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 4060 && averageXpNumbersAtMinutes[i] <= 5039) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 5040) + 8).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 5040 && averageXpNumbersAtMinutes[i] <= 6119) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 6120) + 9).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 6120 && averageXpNumbersAtMinutes[i] <= 7299) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 7300) + 10).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 7300 && averageXpNumbersAtMinutes[i] <= 8579) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 8580) + 11).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 8580 && averageXpNumbersAtMinutes[i] <= 9959) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 9960) + 12).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 9960 && averageXpNumbersAtMinutes[i] <= 11439) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 11440) + 13).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 11440 && averageXpNumbersAtMinutes[i] <= 13019) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 13020) + 14).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 13020 && averageXpNumbersAtMinutes[i] <= 14699) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 14700) + 15).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 14700 && averageXpNumbersAtMinutes[i] <= 16479) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 16480) + 16).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 16480 && averageXpNumbersAtMinutes[i] <= 18359) {
-                averageLevelAtMinutes.push(((averageXpNumbersAtMinutes[i] / 18360) + 17).toFixed(1));
-            }
-            if (averageXpNumbersAtMinutes[i] >= 18360) {
-                averageLevelAtMinutes.push(18);
-            }
-        }
-
-        var averageOpponentLevelAtMinutes = [1];
-        for (i = 1; i < averageXpNumbersAtMinutes.length; i++) {
-            if (averageOpponentXpNumbersAtMinutes[i] !== undefined){
-                if (averageOpponentXpNumbersAtMinutes[i] >= 0 && averageOpponentXpNumbersAtMinutes[i] <= 279) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 280) + 1).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 280 && averageOpponentXpNumbersAtMinutes[i] <= 659) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 660) + 2).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 660 && averageOpponentXpNumbersAtMinutes[i] <= 1139) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 1140) + 3).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 1140 && averageOpponentXpNumbersAtMinutes[i] <= 1719) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 1720) + 4).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 1720 && averageOpponentXpNumbersAtMinutes[i] <= 2399) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 2400) + 5).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 2400 && averageOpponentXpNumbersAtMinutes[i] <= 3179) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 3180) + 6).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 3180 && averageOpponentXpNumbersAtMinutes[i] <= 4059) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 4060) + 7).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 4060 && averageOpponentXpNumbersAtMinutes[i] <= 5039) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 5040) + 8).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 5040 && averageOpponentXpNumbersAtMinutes[i] <= 6119) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 6120) + 9).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 6120 && averageOpponentXpNumbersAtMinutes[i] <= 7299) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 7300) + 10).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 7300 && averageOpponentXpNumbersAtMinutes[i] <= 8579) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 8580) + 11).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 8580 && averageOpponentXpNumbersAtMinutes[i] <= 9959) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 9960) + 12).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 9960 && averageOpponentXpNumbersAtMinutes[i] <= 11439) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 11440) + 13).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 11440 && averageOpponentXpNumbersAtMinutes[i] <= 13019) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 13020) + 14).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 13020 && averageOpponentXpNumbersAtMinutes[i] <= 14699) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 14700) + 15).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 14700 && averageOpponentXpNumbersAtMinutes[i] <= 16479) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 16480) + 16).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 16480 && averageOpponentXpNumbersAtMinutes[i] <= 18359) {
-                    averageOpponentLevelAtMinutes.push(((averageOpponentXpNumbersAtMinutes[i] / 18360) + 17).toFixed(1));
-                }
-                if (averageOpponentXpNumbersAtMinutes[i] >= 18360) {
-                    averageOpponentLevelAtMinutes.push(18);
-                }
-        }
-        }
-
         var aggregateTimelineData = {
+            averageKillsAtMinutes: averageKillsAtMinutes,
+            averageDeathsAtMinutes: averageDeathsAtMinutes,
+            averageAssistsAtMinutes: averageAssistsAtMinutes,
+            averageKdaAtMinutes: averageKdaAtMinutes,
             averageCsNumbersAtMinutes: averageCsNumbersAtMinutes,
+            averageCsNumbersPerMinuteAtMinutes: averageCsNumbersPerMinuteAtMinutes,
             averageOpponentCsNumbersAtMinutes: averageOpponentCsNumbersAtMinutes,
+            averageOpponentCsNumbersPerMinuteAtMinutes: averageOpponentCsNumbersPerMinuteAtMinutes,
             averageJungleMinionsAtMinutes: averageJungleMinionsAtMinutes,
             averageOpponentJungleMinionsAtMinutes: averageOpponentJungleMinionsAtMinutes,
-            averageLevelAtMinutes: averageLevelAtMinutes,
-            averageOpponentLevelAtMinutes: averageOpponentLevelAtMinutes,
             averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes,
             averageOpponentGoldNumbersAtMinutes: averageOpponentGoldNumbersAtMinutes,
-
+            
         }
         return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });
     }
