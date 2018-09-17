@@ -10,6 +10,8 @@ export default (state = [], action) => {
       return newState;
     case ACTION_TYPES.GET_MATCH_FAILURE:
       return state;
+    case ACTION_TYPES.CLEAR_DATA:
+      console.log("hi");
     default:
       return state;
   }

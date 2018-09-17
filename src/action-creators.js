@@ -494,6 +494,7 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
     }
 }
 
+
 const getMostCommonRole = (arrayOfRoles) => {
     return arrayOfRoles.sort((a, b) =>
         arrayOfRoles.filter(v => v === a).length
@@ -501,18 +502,23 @@ const getMostCommonRole = (arrayOfRoles) => {
     ).pop();
 }
 
-
+const clearData = () => {
+    return dispatch => {
+        return dispatch({ type: ACTION_TYPES.CLEAR_DATA, })
+    }
+}
 
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
     var matchList = [];
 
     return (dispatch, getState) => {
-        dispatch(getSummonerByName(summonerName))
-        .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId).then(data => {
-            matchList = data.matches;
-        }, err => err))
-        .then(() => dispatch(getMatchesForMatchList(matchList)))
-        .then(() => dispatch(getMatchTimelineForMatchList(matchList)))
-        .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
+        dispatch(clearData())
+            .then(() => dispatch(getSummonerByName(summonerName)))
+            .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId).then(data => {
+                matchList = data.matches;
+            }, err => err))
+            .then(() => dispatch(getMatchesForMatchList(matchList)))
+            .then(() => dispatch(getMatchTimelineForMatchList(matchList)))
+            .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
     }
 }

@@ -3,7 +3,7 @@ import champion from '../champion.js';
 import Select from 'react-select';
 import Button from '@material-ui/core/Button';
 import '../App.css'
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const options = champion.map(option => ({
   value: option.id,
@@ -19,9 +19,9 @@ class Input extends React.Component {
       username: "",
       champion: champion,
       selectedOption: null,
+      loading: false,
     }; 
   }
-
 
 
   handleChange = (selectedOption) => {
@@ -31,6 +31,12 @@ class Input extends React.Component {
   handleGetMatches = (event) => {
     event.preventDefault();
     this.props.dispatch(this.props.getDataForSummonerNameAndChampionId(this.state.username, this.state.selectedOption.value));
+  }
+
+  handleKeyPress = (event) => {
+    if(event.key === 'Enter' && this.state.selectedOption !== null){
+      this.props.dispatch(this.props.getDataForSummonerNameAndChampionId(this.state.username, this.state.selectedOption.value));
+    }
   }
 
   handleUsernameChanged = (event) => {
@@ -58,6 +64,7 @@ class Input extends React.Component {
               placeholder="Champion"
               value={selectedOption}
               onChange={this.handleChange}
+              onKeyDown={this.handleKeyPress}
               options={options}
             />
         </div>
@@ -71,7 +78,11 @@ class Input extends React.Component {
               }> Get Matches 
               </Button>
         </div>
+        <div className="loading">
+          <CircularProgress />
+        </div>
       </div>
+
     );
   }
 }
