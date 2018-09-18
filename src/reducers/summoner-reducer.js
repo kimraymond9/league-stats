@@ -11,6 +11,7 @@ export default (state = {}, action) => {
         accountId: '200160442' // never bard
       }
     case ACTION_TYPES.CLEAR_DATA:
+      return {};
     default:
       return state;
   }

@@ -11,7 +11,7 @@ export default (state = [], action) => {
         case ACTION_TYPES.GET_MATCH_TIMELINE_FAILURE:
             return state;
         case ACTION_TYPES.CLEAR_DATA:
-            console.log("hi");
+            return [];
         default:
             return state;
     }

@@ -5,7 +5,7 @@ export default (state = {}, action) => {
         case ACTION_TYPES.GET_USER_TIMELINE_DATA:
             return action.aggregateTimelineData;
         case ACTION_TYPES.CLEAR_DATA:
-            console.log("hi");
+            return {};
         default:
             return state;
     }

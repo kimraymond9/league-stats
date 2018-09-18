@@ -504,16 +504,18 @@ const getMostCommonRole = (arrayOfRoles) => {
 
 const clearData = () => {
     return dispatch => {
-        return dispatch({ type: ACTION_TYPES.CLEAR_DATA, })
+        var hello = "";
+        return dispatch({ type: ACTION_TYPES.CLEAR_DATA, hello })
     }
 }
+
 
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
     var matchList = [];
 
     return (dispatch, getState) => {
         dispatch(clearData())
-            .then(() => dispatch(getSummonerByName(summonerName)))
+        dispatch(getSummonerByName(summonerName))
             .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId).then(data => {
                 matchList = data.matches;
             }, err => err))
