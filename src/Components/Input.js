@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import champion from '../champion.js';
 import Select from 'react-select';
 import Button from '@material-ui/core/Button';
@@ -9,7 +10,6 @@ const options = champion.map(option => ({
   value: option.id,
   label: option.name,
 }))
-
 
 
 class Input extends React.Component {
@@ -23,14 +23,16 @@ class Input extends React.Component {
     }; 
   }
 
-
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
   }
 
   handleGetMatches = (event) => {
     event.preventDefault();
-    this.props.dispatch(this.props.getDataForSummonerNameAndChampionId(this.state.username, this.state.selectedOption.value));
+    if (this.state.selectedOption !== null){
+      this.setState({loading: true})
+      this.props.dispatch(this.props.getDataForSummonerNameAndChampionId(this.state.username, this.state.selectedOption.value));
+    }
   }
 
   handleKeyPress = (event) => {
@@ -44,6 +46,7 @@ class Input extends React.Component {
     this.setState({username: event.target.value});
   }
 
+
   render() {
     const { selectedOption } = this.state;
 
@@ -53,6 +56,7 @@ class Input extends React.Component {
             <input
               className="Username"
               placeholder="Username"
+              maxLength="16"
               onChange={
                 this.handleUsernameChanged
               }
@@ -64,7 +68,6 @@ class Input extends React.Component {
               placeholder="Champion"
               value={selectedOption}
               onChange={this.handleChange}
-              onKeyDown={this.handleKeyPress}
               options={options}
             />
         </div>
@@ -78,8 +81,11 @@ class Input extends React.Component {
               }> Get Matches 
               </Button>
         </div>
+        <div className="errorMessage">
+        {this.props.summoner.message}
+        </div>
         <div className="loading">
-          <CircularProgress />
+          {this.state.loading ? <CircularProgress /> : null}
         </div>
       </div>
 
@@ -87,4 +93,11 @@ class Input extends React.Component {
   }
 }
 
-export default Input;
+const mapStateToProps = state => {
+  return {
+    userTimelineData: state.userTimelineData,
+    summoner: state.summoner,
+  }
+};
+
+export default connect(mapStateToProps)(Input);

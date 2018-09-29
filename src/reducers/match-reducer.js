@@ -9,7 +9,7 @@ export default (state = [], action) => {
       newState.push(action.data);
       return newState;
     case ACTION_TYPES.GET_MATCH_FAILURE:
-      return state;
+      console.log("fff");
     case ACTION_TYPES.CLEAR_DATA:
       return [];
     default:

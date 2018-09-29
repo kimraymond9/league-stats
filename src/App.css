@@ -79,6 +79,10 @@ body{
   width:60%;
 }
 
+.errorMessage{
+  text-align: center;
+}
+
 @media only screen and (max-width: 1100px) {
     .side{
       width:30%;

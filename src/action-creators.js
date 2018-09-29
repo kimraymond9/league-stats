@@ -14,24 +14,31 @@ const getSummonerByName = summonerName => {
                 }
                 return response.json();
             }).then(
-            data =>dispatch({ type: ACTION_TYPES.GET_SUMMONER_SUCCESS, data }),
+            data => dispatch({ type: ACTION_TYPES.GET_SUMMONER_SUCCESS, data }),
             err => dispatch({ type: ACTION_TYPES.GET_SUMMONER_FAILURE, err })
         );
     }
+
 }
 
 // MATCH LIST
 const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=440&queue=700&api_key=${API_KEY}`)
 
 const getChampionMatchListByAccount = (championId, accountId) => {
-    return fetchChampionMatchListByAccount(championId, accountId).then(
-        response => {
-            if (!response.ok) {
-                throw Error(response.statusText);
-            }
-            return response.json();
-        })
+    return dispatch => {
+        return fetchChampionMatchListByAccount(championId, accountId).then(
+            response => {
+                if (!response.ok) {
+                    throw Error(response.statusText);
+                }
+                return response.json();
+            }).then(
+                data => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_SUCCESS, data }),
+                err => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_FAILURE, err })
+            );
+    }
 }
+
 
 // MATCHES
 const fetchMatchById = matchId => fetch(`${CORS_URL}${RIOT_URL}match/v3/matches/${matchId}?api_key=${API_KEY}`)
@@ -196,9 +203,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
 
         matchesOrdered = _.orderBy(matchesOrdered, ['gameId'], ['asc'])
         matchTimelinesOrdered = _.orderBy(matchTimelinesOrdered, ['gameId'], ['asc'])
-
-        console.log(matchesOrdered);
-        console.log(matchTimelinesOrdered);
 
         var userParticipantIds = [];
         var enemyParticipantIds = [];
@@ -488,6 +492,7 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             averageOpponentJungleMinionsAtMinutes: averageOpponentJungleMinionsAtMinutes,
             averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes,
             averageOpponentGoldNumbersAtMinutes: averageOpponentGoldNumbersAtMinutes,
+            loadingFinished: false,
             
         }
         return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });
@@ -504,23 +509,20 @@ const getMostCommonRole = (arrayOfRoles) => {
 
 const clearData = () => {
     return dispatch => {
-        var hello = "";
-        return dispatch({ type: ACTION_TYPES.CLEAR_DATA, hello })
+        return dispatch({ type: ACTION_TYPES.CLEAR_DATA })
     }
 }
 
-
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
-    var matchList = [];
 
     return (dispatch, getState) => {
         dispatch(clearData())
         dispatch(getSummonerByName(summonerName))
-            .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId).then(data => {
-                matchList = data.matches;
-            }, err => err))
-            .then(() => dispatch(getMatchesForMatchList(matchList)))
-            .then(() => dispatch(getMatchTimelineForMatchList(matchList)))
+            .then(() => console.log(getState().summoner.accountId))
+            .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId))
+            .then(() => console.log(getState().matchList))
+            .then(() => dispatch(getMatchesForMatchList(getState().matchList)))
+            .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList)))
             .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
     }
 }

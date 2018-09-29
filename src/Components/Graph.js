@@ -426,6 +426,7 @@ class Graph extends React.Component {
                 </Typography>
             );
         }
+
         return (
             <div className="graph">
                 <AppBar position="static" color="primary">
@@ -454,7 +455,6 @@ class Graph extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        userData: state.userData,
         userTimelineData: state.userTimelineData
     }
 };
