@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { getDataForSummonerNameAndChampionId } from './action-creators';
-import App from './Components/App';
 import Input from './Components/Input';
 import Graph from './Components/Graph';
 import registerServiceWorker from './registerServiceWorker';
@@ -12,7 +11,6 @@ const store = configureStore();
 
 ReactDOM.render(<Provider store={store}>
   <div className="application">
-    <App />
     <div className="w3-row">
       <div className="w3-col side w3-container"></div>
       <div className="w3-col firstColumn w3-container">

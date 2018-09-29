@@ -1,14 +1,23 @@
 import React from 'react';
+import logo from '../logo.png';
 import { connect } from 'react-redux';
 import champion from '../champion.js';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
 import Button from '@material-ui/core/Button';
 import '../App.css'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+const IconOption = (props) => (
+  <components.Option {...props}>
+    <img src={props.data.icon} height="32" width="32" />
+    {' '}{props.data.label}
+  </components.Option>
+);
+
 const options = champion.map(option => ({
   value: option.id,
   label: option.name,
+  icon: option.icon,
 }))
 
 
@@ -54,6 +63,13 @@ class Input extends React.Component {
 
     return ( 
       <div className="input">
+        <div className="App w3-row">
+          <div className="w3-display-container w3-content w3-wide">
+            <header className="App-header">
+              <img src={logo} className="App-logo" alt="logo" />
+            </header>
+          </div>
+        </div>
         <div className="component">
             <input
               className="Username"
@@ -68,6 +84,7 @@ class Input extends React.Component {
             <Select
               className="options"
               placeholder="Champion"
+              components={{ Option: IconOption }}
               value={selectedOption}
               onChange={this.handleChange}
               options={options}
@@ -89,7 +106,6 @@ class Input extends React.Component {
           {!!this.props.summoner.accountId && !Object.keys(this.props.userTimelineData).length ? <CircularProgress /> : null}
         </div>
       </div>
-
     );
   }
 }
