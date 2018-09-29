@@ -410,7 +410,7 @@ class Graph extends React.Component {
                         return tooltipItem[0].xLabel + ' mins';
                     },
                     label: function (tooltipItem, data) {
-                        return tooltipItem.yLabel.toFixed(1) + data.datasets[0].label;
+                        return tooltipItem.yLabel.toFixed(1);
                     }
                 }
             }
