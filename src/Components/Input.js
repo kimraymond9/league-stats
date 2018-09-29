@@ -47,6 +47,8 @@ class Input extends React.Component {
   }
 
 
+
+
   render() {
     const { selectedOption } = this.state;
 
@@ -82,10 +84,9 @@ class Input extends React.Component {
               </Button>
         </div>
         <div className="errorMessage">
-        {this.props.summoner.message}
         </div>
         <div className="loading">
-          {this.state.loading ? <CircularProgress /> : null}
+          {!!this.props.summoner.accountId && !Object.keys(this.props.userTimelineData).length ? <CircularProgress /> : null}
         </div>
       </div>
 

@@ -492,8 +492,6 @@ const getMatchTimelineData = (accountId, matches, matchTimelines) => {
             averageOpponentJungleMinionsAtMinutes: averageOpponentJungleMinionsAtMinutes,
             averageGoldNumbersAtMinutes: averageGoldNumbersAtMinutes,
             averageOpponentGoldNumbersAtMinutes: averageOpponentGoldNumbersAtMinutes,
-            loadingFinished: false,
-            
         }
         return dispatch({ type: ACTION_TYPES.GET_USER_TIMELINE_DATA, aggregateTimelineData });
     }
@@ -518,9 +516,7 @@ export const getDataForSummonerNameAndChampionId = (summonerName, championId) =>
     return (dispatch, getState) => {
         dispatch(clearData())
         dispatch(getSummonerByName(summonerName))
-            .then(() => console.log(getState().summoner.accountId))
-            .then(() => getChampionMatchListByAccount(championId, getState().summoner.accountId))
-            .then(() => console.log(getState().matchList))
+            .then(() => dispatch(getChampionMatchListByAccount(championId, getState().summoner.accountId)))
             .then(() => dispatch(getMatchesForMatchList(getState().matchList)))
             .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList)))
             .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
