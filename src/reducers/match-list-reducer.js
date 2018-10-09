@@ -5,9 +5,7 @@ export default (state = [], action) => {
         case ACTION_TYPES.GET_MATCH_LIST_SUCCESS:
             console.log(action.data.matches);
             return action.data.matches;
-        case ACTION_TYPES.GET_MATCH_LIST_FAILURE:
-            return state;
         default:
             return state;
     }
-}; 
+};

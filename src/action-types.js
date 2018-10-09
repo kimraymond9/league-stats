@@ -13,6 +13,9 @@ export const GET_MATCH_TIMELINE_FAILURE = 'GET_MATCH_TIMELINE_FAILURE';
 export const GET_USER_TIMELINE_DATA = 'GET_USER_TIMELINE_DATA';
 
 export const CLEAR_DATA = 'CLEAR_DATA';
+export const REQUEST_START = 'REQUEST_START';
+export const REQUEST_END = 'REQUEST_END';
+export const ERROR = 'ERROR';
 
 export default {
     GET_SUMMONER_SUCCESS,
@@ -25,4 +28,7 @@ export default {
     GET_MATCH_TIMELINE_FAILURE,
     GET_USER_TIMELINE_DATA,
     CLEAR_DATA,
+    REQUEST_START,
+    REQUEST_END,
+    ERROR,
 }

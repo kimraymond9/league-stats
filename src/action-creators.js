@@ -14,8 +14,7 @@ const getSummonerByName = summonerName => {
                 }
                 return response.json();
             }).then(
-            data => dispatch({ type: ACTION_TYPES.GET_SUMMONER_SUCCESS, data }),
-            err => dispatch({ type: ACTION_TYPES.GET_SUMMONER_FAILURE, err })
+            data => dispatch({ type: ACTION_TYPES.GET_SUMMONER_SUCCESS, data })
         );
     }
 
@@ -33,8 +32,7 @@ const getChampionMatchListByAccount = (championId, accountId) => {
                 }
                 return response.json();
             }).then(
-                data => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_SUCCESS, data }),
-                err => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_FAILURE, err })
+                data => dispatch({ type: ACTION_TYPES.GET_MATCH_LIST_SUCCESS, data })
             );
     }
 }
@@ -46,6 +44,9 @@ const fetchMatchById = matchId => fetch(`${CORS_URL}${RIOT_URL}match/v3/matches/
 const getMatchesForMatchList = matchList => {
     return dispatch => {
         const promises = []
+        if(!matchList){
+            return Promise.resolve([]);
+        }
         matchList.forEach(match => {
             promises.push(
                 fetchMatchById(match.gameId).then(
@@ -55,8 +56,7 @@ const getMatchesForMatchList = matchList => {
                         }
                         return response.json();
                     }).then(
-                        data => dispatch({ type: ACTION_TYPES.GET_MATCH_SUCCESS, data }),
-                        err => dispatch({ type: ACTION_TYPES.GET_MATCH_FAILURE, err })
+                        data => dispatch({ type: ACTION_TYPES.GET_MATCH_SUCCESS, data })
                     )
             );
         });
@@ -81,8 +81,7 @@ const getMatchTimelineForMatchList = matchList => {
                         data => {
                             data.gameId = match.gameId;
                             dispatch({ type: ACTION_TYPES.GET_MATCH_TIMELINE_SUCCESS, data })
-                        },
-                        err => dispatch({ type: ACTION_TYPES.GET_MATCH_TIMELINE_FAILURE, err })
+                        }
                     )
             );
         });
@@ -511,14 +510,39 @@ const clearData = () => {
     }
 }
 
+const startRequest = () => {
+    return dispatch => {
+        return dispatch({ type: ACTION_TYPES.REQUEST_START })
+    }
+}
+
+const endRequest = () => {
+    return dispatch => {
+        return dispatch({ type: ACTION_TYPES.REQUEST_END})
+    }
+}
+
+const sendError = (error) => {
+    return dispatch => {
+        return dispatch({ type: ACTION_TYPES.ERROR, error })
+    }
+}
+
 export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
 
     return (dispatch, getState) => {
         dispatch(clearData())
+        dispatch(startRequest())
         dispatch(getSummonerByName(summonerName))
             .then(() => dispatch(getChampionMatchListByAccount(championId, getState().summoner.accountId)))
             .then(() => dispatch(getMatchesForMatchList(getState().matchList)))
             .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList)))
             .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
+            .then(() => dispatch(endRequest()))
+            .catch(error => {
+                        dispatch(endRequest())
+                        dispatch(sendError(error))
+                    }
+                )
     }
 }

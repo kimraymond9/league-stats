@@ -9,7 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 const IconOption = (props) => (
   <components.Option {...props}>
-    <img src={props.data.icon} height="32" width="32" />
+    <img className="icons" src={props.data.icon} alt="" />
     {' '}{props.data.label}
   </components.Option>
 );
@@ -28,7 +28,6 @@ class Input extends React.Component {
       username: "",
       champion: champion,
       selectedOption: null,
-      loading: false,
     }; 
   }
 
@@ -101,9 +100,10 @@ class Input extends React.Component {
               </Button>
         </div>
         <div className="errorMessage">
+              {this.props.status.errorMessage}
         </div>
         <div className="loading">
-          {!!this.props.summoner.accountId && !Object.keys(this.props.userTimelineData).length ? <CircularProgress /> : null}
+          {this.props.status.loading ? <CircularProgress /> : null}
         </div>
       </div>
     );
@@ -113,7 +113,7 @@ class Input extends React.Component {
 const mapStateToProps = state => {
   return {
     userTimelineData: state.userTimelineData,
-    summoner: state.summoner,
+    status: state.status,
   }
 };
 

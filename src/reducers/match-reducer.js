@@ -8,8 +8,6 @@ export default (state = [], action) => {
       _.merge(newState, state);
       newState.push(action.data);
       return newState;
-    case ACTION_TYPES.GET_MATCH_FAILURE:
-      console.log("fff");
     case ACTION_TYPES.CLEAR_DATA:
       return [];
     default:
