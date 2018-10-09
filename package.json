@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^1.4.2",
     "chart.js": "^2.7.2",
+    "cryptiles": "^4.1.2",
     "deep-extend": "^0.5.1",
     "hoek": "^5.0.3",
     "lodash": "^4.17.10",
