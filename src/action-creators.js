@@ -3,11 +3,11 @@ import ACTION_TYPES from './action-types';
 import _ from 'lodash';
 
 // ACCOUNT
-const fetchSummonerByName = summonerName => fetch(`${CORS_URL}${RIOT_URL}summoner/v3/summoners/by-name/${summonerName}?api_key=${API_KEY}`)
+const fetchSummonerByName = (summonerName, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}summoner/v3/summoners/by-name/${summonerName}?api_key=${API_KEY}`)
 
-const getSummonerByName = summonerName => {
+const getSummonerByName = (summonerName, region) => {
     return dispatch => {
-        return fetchSummonerByName(summonerName).then(
+        return fetchSummonerByName(summonerName, region).then(
             response => {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -21,11 +21,11 @@ const getSummonerByName = summonerName => {
 }
 
 // MATCH LIST
-const fetchChampionMatchListByAccount = (championId, accountId) => fetch(`${CORS_URL}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=440&queue=700&api_key=${API_KEY}`)
+const fetchChampionMatchListByAccount = (championId, accountId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=440&queue=700&api_key=${API_KEY}`)
 
-const getChampionMatchListByAccount = (championId, accountId) => {
+const getChampionMatchListByAccount = (championId, accountId, region) => {
     return dispatch => {
-        return fetchChampionMatchListByAccount(championId, accountId).then(
+        return fetchChampionMatchListByAccount(championId, accountId, region).then(
             response => {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -39,9 +39,9 @@ const getChampionMatchListByAccount = (championId, accountId) => {
 
 
 // MATCHES
-const fetchMatchById = matchId => fetch(`${CORS_URL}${RIOT_URL}match/v3/matches/${matchId}?api_key=${API_KEY}`)
+const fetchMatchById = (matchId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/matches/${matchId}?api_key=${API_KEY}`)
 
-const getMatchesForMatchList = matchList => {
+const getMatchesForMatchList = (matchList, region) => {
     return dispatch => {
         const promises = []
         if(!matchList){
@@ -49,7 +49,7 @@ const getMatchesForMatchList = matchList => {
         }
         matchList.forEach(match => {
             promises.push(
-                fetchMatchById(match.gameId).then(
+                fetchMatchById(match.gameId, region).then(
                     response => {
                         if (!response.ok) {
                             throw Error(response.statusText);
@@ -64,14 +64,14 @@ const getMatchesForMatchList = matchList => {
     }
 }
 
-const fetchMatchTimelineById = matchId => fetch(`${CORS_URL}${RIOT_URL}match/v3/timelines/by-match/${matchId}?api_key=${API_KEY}`)
+const fetchMatchTimelineById = (matchId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/timelines/by-match/${matchId}?api_key=${API_KEY}`)
 
-const getMatchTimelineForMatchList = matchList => {
+const getMatchTimelineForMatchList = (matchList, region) => {
     return dispatch => {
         const promises = []
         matchList.forEach(match => {
             promises.push(
-                fetchMatchTimelineById(match.gameId).then(
+                fetchMatchTimelineById(match.gameId, region).then(
                     response => {
                         if (!response.ok) {
                             throw Error(response.statusText);
@@ -528,15 +528,15 @@ const sendError = (error) => {
     }
 }
 
-export const getDataForSummonerNameAndChampionId = (summonerName, championId) => {
+export const getDataForSummonerNameAndChampionId = (summonerName, championId, region) => {
 
     return (dispatch, getState) => {
         dispatch(clearData())
         dispatch(startRequest())
-        dispatch(getSummonerByName(summonerName))
-            .then(() => dispatch(getChampionMatchListByAccount(championId, getState().summoner.accountId)))
-            .then(() => dispatch(getMatchesForMatchList(getState().matchList)))
-            .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList)))
+        dispatch(getSummonerByName(summonerName, region))
+            .then(() => dispatch(getChampionMatchListByAccount(championId, getState().summoner.accountId, region)))
+            .then(() => dispatch(getMatchesForMatchList(getState().matchList, region)))
+            .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList, region)))
             .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
             .then(() => dispatch(endRequest()))
             .catch(error => {
