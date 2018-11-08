@@ -22,7 +22,7 @@ const options = champion.map(option => ({
   icon: option.icon,
 }))
 
-const currencies = [
+const regions = [
   {
     value: 'OC1',
     label: 'OCE',
@@ -149,7 +149,7 @@ class UserInput extends React.Component {
             margin="normal"
             variant="outlined"
           >
-            {currencies.map(option => (
+            {regions.map(option => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
