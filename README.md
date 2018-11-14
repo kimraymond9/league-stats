@@ -1,1 +1,1 @@
-leauge-stats
+league-stats
