@@ -1,14 +1,26 @@
-import { API_KEY, CORS_URL, MAX_LENGTH, RIOT_URL } from './API-constants.js';
 import ACTION_TYPES from './action-types';
 import _ from 'lodash';
 
+const API_GATEWAY_URL = 'https://h4whtl54k2.execute-api.ap-southeast-2.amazonaws.com/default/fetchRiotAPIData';
+
 // ACCOUNT
-const fetchSummonerByName = (summonerName, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}summoner/v3/summoners/by-name/${summonerName}?api_key=${API_KEY}`)
+const fetchSummonerByName = (summonerName, region) => fetch(API_GATEWAY_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+        endpoint: 'summoner',
+        summonerName,
+        region
+    }),
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
 
 const getSummonerByName = (summonerName, region) => {
     return dispatch => {
         return fetchSummonerByName(summonerName, region).then(
             response => {
+                console.log(response);
                 if (!response.ok) {
                     throw Error(response.statusText);
                 }
@@ -21,12 +33,24 @@ const getSummonerByName = (summonerName, region) => {
 }
 
 // MATCH LIST
-const fetchChampionMatchListByAccount = (championId, accountId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/matchlists/by-account/${accountId}?champion=${championId}&endIndex=${MAX_LENGTH}&queue=400&queue=420&queue=440&queue=700&api_key=${API_KEY}`)
+const fetchChampionMatchListByAccount = (championId, accountId, region) => fetch(API_GATEWAY_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+        endpoint: 'matchList',
+        championId,
+        accountId,
+        region
+    }),
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
 
 const getChampionMatchListByAccount = (championId, accountId, region) => {
     return dispatch => {
         return fetchChampionMatchListByAccount(championId, accountId, region).then(
             response => {
+                console.log(response);
                 if (!response.ok) {
                     throw Error(response.statusText);
                 }
@@ -39,18 +63,29 @@ const getChampionMatchListByAccount = (championId, accountId, region) => {
 
 
 // MATCHES
-const fetchMatchById = (matchId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/matches/${matchId}?api_key=${API_KEY}`)
+const fetchMatchById = (matchId, region) => fetch(API_GATEWAY_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+        endpoint: 'matches',
+        matchId,
+        region
+    }),
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
 
 const getMatchesForMatchList = (matchList, region) => {
     return dispatch => {
         const promises = []
-        if(!matchList){
+        if (!matchList) {
             return Promise.resolve([]);
         }
         matchList.forEach(match => {
             promises.push(
                 fetchMatchById(match.gameId, region).then(
                     response => {
+                        console.log(response);
                         if (!response.ok) {
                             throw Error(response.statusText);
                         }
@@ -64,7 +99,18 @@ const getMatchesForMatchList = (matchList, region) => {
     }
 }
 
-const fetchMatchTimelineById = (matchId, region) => fetch(`${CORS_URL}https://${region}${RIOT_URL}match/v3/timelines/by-match/${matchId}?api_key=${API_KEY}`)
+// MATCH TIMELINE
+const fetchMatchTimelineById = (matchId, region) => fetch(API_GATEWAY_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+        endpoint: 'matchTimeline',
+        matchId,
+        region
+    }),
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
 
 const getMatchTimelineForMatchList = (matchList, region) => {
     return dispatch => {
@@ -73,6 +119,7 @@ const getMatchTimelineForMatchList = (matchList, region) => {
             promises.push(
                 fetchMatchTimelineById(match.gameId, region).then(
                     response => {
+                        console.log(response);
                         if (!response.ok) {
                             throw Error(response.statusText);
                         }
@@ -538,11 +585,7 @@ export const getDataForSummonerNameAndChampionId = (summonerName, championId, re
             .then(() => dispatch(getMatchesForMatchList(getState().matchList, region)))
             .then(() => dispatch(getMatchTimelineForMatchList(getState().matchList, region)))
             .then(() => dispatch(getMatchTimelineData(getState().summoner.accountId, getState().matches, getState().matchesTimeline)))
-            .then(() => dispatch(endRequest()))
-            .catch(error => {
-                        dispatch(endRequest())
-                        dispatch(sendError(error))
-                    }
-                )
+            .catch(error => dispatch(sendError(error)))
+            .finally(() => dispatch(endRequest()))
     }
 }
