@@ -24,7 +24,7 @@
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.2.0",
     "uikit": "^3.0.0-rc.21",
-    "url-parse": "^1.4.4"
+    "url-parse": "^1.5.8"
   },
   "scripts": {
     "start": "react-scripts start",
